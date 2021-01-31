@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DesktopNotifications\DesktopNotifications.csproj" />
+    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.0.0-preview4" />
+  </ItemGroup>
+
+</Project>
