@@ -9,6 +9,7 @@ namespace DesktopNotifications.FreeDesktop
 {
     public class FreeDesktopNotificationManager : INotificationManager, IDisposable
     {
+        private readonly FreeDesktopApplicationContext _appContext;
         private const string NotificationsService = "org.freedesktop.Notifications";
 
         private static readonly ObjectPath NotificationsPath = new ObjectPath("/org/freedesktop/Notifications");
@@ -19,8 +20,13 @@ namespace DesktopNotifications.FreeDesktop
 
         private IFreeDesktopNotificationsProxy? _proxy;
 
-        public FreeDesktopNotificationManager()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="appContext"></param>
+        public FreeDesktopNotificationManager(FreeDesktopApplicationContext? appContext = null)
         {
+            _appContext = appContext ?? FreeDesktopApplicationContext.FromCurrentProcess();
             _activeNotifications = new Dictionary<uint, Notification>();
         }
 
@@ -65,9 +71,9 @@ namespace DesktopNotifications.FreeDesktop
             var actions = GenerateActions(notification);
 
             var id = await _proxy.NotifyAsync(
-                "MyApp",
+                _appContext.Name,
                 0,
-                string.Empty,
+                _appContext.AppIcon ?? string.Empty,
                 notification.Title ?? throw new ArgumentException(),
                 notification.Body ?? throw new ArgumentException(),
                 actions.ToArray(),

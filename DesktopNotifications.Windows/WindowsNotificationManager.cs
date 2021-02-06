@@ -10,6 +10,7 @@ namespace DesktopNotifications.Windows
 {
     public class WindowsNotificationManager : INotificationManager
     {
+        private readonly WindowsApplicationContext _applicationContext;
         private readonly Dictionary<ToastNotification, Notification> _notifications;
         private readonly ToastNotifier _toastNotifier;
         private string? _launchAction;
@@ -18,10 +19,11 @@ namespace DesktopNotifications.Windows
 
         /// <summary>
         /// </summary>
-        /// <param name="appId"></param>
-        public WindowsNotificationManager(string appId)
+        /// <param name="applicationContext"></param>
+        public WindowsNotificationManager(WindowsApplicationContext? applicationContext = null)
         {
-            _toastNotifier = ToastNotificationManager.CreateToastNotifier(appId);
+            _applicationContext = applicationContext ?? WindowsApplicationContext.FromCurrentProcess();
+            _toastNotifier = ToastNotificationManager.CreateToastNotifier(_applicationContext.AppUserModelId);
             _notifications = new Dictionary<ToastNotification, Notification>();
         }
 

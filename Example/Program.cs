@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using DesktopNotifications;
 using DesktopNotifications.FreeDesktop;
 using DesktopNotifications.Windows;
-using Example.Win32;
 
 namespace Example
 {
@@ -25,24 +22,7 @@ namespace Example
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                const string AppName = "DesktopNotificationsExample";
-
-                SetCurrentProcessExplicitAppUserModelID(AppName);
-
-                using var shortcut = new ShellLink
-                {
-                    TargetPath = Process.GetCurrentProcess().MainModule.FileName,
-                    Arguments = string.Empty,
-                    AppUserModelID = AppName
-                };
-
-                var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                var startMenuPath = Path.Combine(appData, @"Microsoft\Windows\Start Menu\Programs");
-                var shortcutFile = Path.Combine(startMenuPath, $"{AppName}.lnk");
-
-                shortcut.Save(shortcutFile);
-
-                return new WindowsNotificationManager(AppName);
+                return new WindowsNotificationManager();
             }
 
             throw new PlatformNotSupportedException();
