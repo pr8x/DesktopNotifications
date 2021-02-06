@@ -2,6 +2,7 @@
 
 A cross-platform C# library for desktop "toast" notifications.
 
+![Build](https://github.com/pr8x/DesktopNotifications/workflows/Build/badge.svg)
 
 # Features
 
