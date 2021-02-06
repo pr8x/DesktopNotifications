@@ -51,11 +51,10 @@ namespace Example
         private static async Task Main(string[] args)
         {
             using var manager = CreateManager();
+            await manager.Initialize();
 
             manager.NotificationActivated += ManagerOnNotificationActivated;
             manager.NotificationDismissed += ManagerOnNotificationDismissed;
-
-            await manager.Initialize();
 
             var notification = new Notification
             {

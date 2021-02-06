@@ -12,7 +12,9 @@ namespace DesktopNotifications.Windows
     {
         private readonly Dictionary<ToastNotification, Notification> _notifications;
         private readonly ToastNotifier _toastNotifier;
+        private string? _launchAction;
         private TaskCompletionSource<string?>? _launchActionPromise;
+        private EventHandler<NotificationActivatedEventArgs>? _notificationActivatedHandler;
 
         /// <summary>
         /// </summary>
@@ -23,7 +25,16 @@ namespace DesktopNotifications.Windows
             _notifications = new Dictionary<ToastNotification, Notification>();
         }
 
-        public event EventHandler<NotificationActivatedEventArgs>? NotificationActivated;
+        public event EventHandler<NotificationActivatedEventArgs>? NotificationActivated
+        {
+            add
+            {
+                _notificationActivatedHandler += value;
+                ProcessLaunchAction();
+            }
+            remove => _notificationActivatedHandler -= value;
+        }
+
         public event EventHandler<NotificationDismissedEventArgs>? NotificationDismissed;
 
         public async ValueTask Initialize()
@@ -33,29 +44,12 @@ namespace DesktopNotifications.Windows
                 _launchActionPromise = new TaskCompletionSource<string?>();
                 ToastNotificationManagerCompat.OnActivated += OnAppActivated;
 
-                var launchAction = await _launchActionPromise.Task;
+                _launchAction = await _launchActionPromise.Task;
 
-                Debug.Assert(launchAction != null);
+                Debug.Assert(_launchAction != null);
 
-                //TODO: Lookup notification object from history?
-                NotificationActivated?.Invoke(this,
-                    new NotificationActivatedEventArgs(null, launchAction));
+                ProcessLaunchAction();
             }
-        }
-
-        private static XmlDocument GenerateXml(Notification notification)
-        {
-            var builder = new ToastContentBuilder();
-
-            builder.AddText(notification.Title);
-            builder.AddText(notification.Body);
-
-            foreach (var (title, actionId) in notification.Buttons)
-            {
-                builder.AddButton(title, ToastActivationType.Foreground, actionId);
-            }
-
-            return builder.GetXml();
         }
 
         public ValueTask ShowNotification(Notification notification, DateTimeOffset? expirationTime)
@@ -79,6 +73,39 @@ namespace DesktopNotifications.Windows
             _notifications[toastNotification] = notification;
 
             return default;
+        }
+
+        public void Dispose()
+        {
+        }
+
+        private void ProcessLaunchAction()
+        {
+            if (_launchAction == null || _notificationActivatedHandler == null)
+            {
+                return;
+            }
+
+            //TODO: Lookup notification object from history?
+            _notificationActivatedHandler.Invoke(this,
+                new NotificationActivatedEventArgs(null, _launchAction));
+
+            _launchAction = null;
+        }
+
+        private static XmlDocument GenerateXml(Notification notification)
+        {
+            var builder = new ToastContentBuilder();
+
+            builder.AddText(notification.Title);
+            builder.AddText(notification.Body);
+
+            foreach (var (title, actionId) in notification.Buttons)
+            {
+                builder.AddButton(title, ToastActivationType.Foreground, actionId);
+            }
+
+            return builder.GetXml();
         }
 
         private void OnAppActivated(ToastNotificationActivatedEventArgsCompat e)
@@ -114,11 +141,7 @@ namespace DesktopNotifications.Windows
             var notification = _notifications[sender];
             var actionId = string.IsNullOrEmpty(activationArgs.Arguments) ? "default" : activationArgs.Arguments;
 
-            NotificationActivated?.Invoke(this, new NotificationActivatedEventArgs(notification, actionId));
-        }
-
-        public void Dispose()
-        {
+            _notificationActivatedHandler?.Invoke(this, new NotificationActivatedEventArgs(notification, actionId));
         }
     }
 }

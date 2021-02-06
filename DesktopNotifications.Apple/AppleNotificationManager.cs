@@ -14,10 +14,12 @@ namespace DesktopNotifications.Apple
 
         public ValueTask Initialize()
         {
+            return default;
         }
 
         public ValueTask ShowNotification(Notification notification, DateTimeOffset? expirationTime = null)
         {
+            return default;
         }
     }
 }
