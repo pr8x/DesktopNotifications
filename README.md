@@ -4,6 +4,10 @@ A cross-platform C# library for desktop "toast" notifications.
 
 ![Build](https://github.com/pr8x/DesktopNotifications/workflows/Build/badge.svg)
 
+![Linux](.github/images/linux_demo_image_06_02_21.png?raw=true)
+
+![Windows](.github/images/win_demo_image_06_02_21.png?raw=true)
+
 # Features
 
 |                          | Windows | Linux (FreeDesktop) | OSX |
