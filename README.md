@@ -4,10 +4,6 @@ A cross-platform C# library for desktop "toast" notifications.
 
 ![Build](https://github.com/pr8x/DesktopNotifications/workflows/Build/badge.svg)
 
-![Linux](.github/images/linux_demo_image_06_02_21.png?raw=true)
-
-![Windows](.github/images/win_demo_image_06_02_21.png?raw=true)
-
 # Features
 
 |                          | Windows | Linux (FreeDesktop) | OSX |
@@ -25,6 +21,12 @@ A cross-platform C# library for desktop "toast" notifications.
 
 The `DesktopNotifications.Avalonia` package offers support for the [Avalonia](https://github.com/AvaloniaUI/Avalonia) project. It doesn't do much on its own, it just provides helpers to register
 the `INotificationManager` with the application builder.
+
+# Screenshots
+
+![Linux](.github/images/linux_demo_image_06_02_21.png?raw=true)
+
+![Windows](.github/images/win_demo_image_06_02_21.png?raw=true)
 
 
 # License
