@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using DesktopNotifications;
+using DesktopNotifications.Apple;
 using DesktopNotifications.FreeDesktop;
 using DesktopNotifications.Windows;
 
@@ -23,6 +24,11 @@ namespace Example
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 return new WindowsNotificationManager();
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return new AppleNotificationManager();
             }
 
             throw new PlatformNotSupportedException();

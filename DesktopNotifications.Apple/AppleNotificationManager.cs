@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace DesktopNotifications.Apple
 {
     public class AppleNotificationManager : INotificationManager
     {
+        [DllImport("DesktopNotifications.Apple.Native.dylib")]
+        private static extern void ShowNotification();
+
         public void Dispose()
         {
         }
@@ -19,6 +23,8 @@ namespace DesktopNotifications.Apple
 
         public ValueTask ShowNotification(Notification notification, DateTimeOffset? expirationTime = null)
         {
+            ShowNotification();
+
             return default;
         }
     }
