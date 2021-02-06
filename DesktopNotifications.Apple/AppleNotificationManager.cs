@@ -2,6 +2,8 @@
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
+#pragma warning disable 0067
+
 namespace DesktopNotifications.Apple
 {
     public class AppleNotificationManager : INotificationManager

@@ -90,7 +90,7 @@ namespace DesktopNotifications.Windows
 
             //TODO: Lookup notification object from history?
             _notificationActivatedHandler.Invoke(this,
-                new NotificationActivatedEventArgs(null, _launchAction));
+                new NotificationActivatedEventArgs(null!, _launchAction));
 
             _launchAction = null;
         }
