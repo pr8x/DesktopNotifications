@@ -9,18 +9,24 @@ namespace DesktopNotifications.FreeDesktop
 {
     public class FreeDesktopNotificationManager : INotificationManager, IDisposable
     {
+        private readonly FreeDesktopApplicationContext _appContext;
         private const string NotificationsService = "org.freedesktop.Notifications";
 
         private static readonly ObjectPath NotificationsPath = new ObjectPath("/org/freedesktop/Notifications");
+        private readonly Dictionary<uint, Notification> _activeNotifications;
         private Connection? _connection;
         private IDisposable? _notificationActionSubscription;
         private IDisposable? _notificationCloseSubscription;
-        private Dictionary<uint, Notification> _activeNotifications;
 
         private IFreeDesktopNotificationsProxy? _proxy;
 
-        public FreeDesktopNotificationManager()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="appContext"></param>
+        public FreeDesktopNotificationManager(FreeDesktopApplicationContext? appContext = null)
         {
+            _appContext = appContext ?? FreeDesktopApplicationContext.FromCurrentProcess();
             _activeNotifications = new Dictionary<uint, Notification>();
         }
 
@@ -65,11 +71,11 @@ namespace DesktopNotifications.FreeDesktop
             var actions = GenerateActions(notification);
 
             var id = await _proxy.NotifyAsync(
-                "MyApp",
+                _appContext.Name,
                 0,
-                string.Empty,
-                notification.Title,
-                notification.Body,
+                _appContext.AppIcon ?? string.Empty,
+                notification.Title ?? throw new ArgumentException(),
+                notification.Body ?? throw new ArgumentException(),
                 actions.ToArray(),
                 new Dictionary<string, object> {{"urgency", 1}},
                 duration?.Milliseconds ?? 0
@@ -110,7 +116,7 @@ namespace DesktopNotifications.FreeDesktop
 
             var dismissReason = GetReason(@event.reason);
 
-            NotificationDismissed?.Invoke(this, 
+            NotificationDismissed?.Invoke(this,
                 new NotificationDismissedEventArgs(notification, dismissReason));
         }
 
@@ -123,7 +129,7 @@ namespace DesktopNotifications.FreeDesktop
         {
             var notification = _activeNotifications[@event.id];
 
-            NotificationActivated?.Invoke(this, 
+            NotificationActivated?.Invoke(this,
                 new NotificationActivatedEventArgs(notification, @event.actionKey));
         }
     }

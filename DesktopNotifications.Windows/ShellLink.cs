@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
-namespace Example.Win32
+namespace DesktopNotifications.Windows
 {
     // Modified from http://smdn.jp/programming/tips/createlnk/
     // Originally from http://www.vbaccelerator.com/home/NET/Code/Libraries/Shell_Projects
