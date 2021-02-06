@@ -28,6 +28,9 @@ the `INotificationManager` with the application builder.
 
 ![Windows](.github/images/win_demo_image_06_02_21.png?raw=true)
 
+# Help wanted
+
+My MacBook Pro is 11 years old now and it does not run OSX Mojave or higher. Unfortunately, Apple deprecated `NSUserNotificationCenter` with OSX 10.14 and I suppose they want us to use the newer `UNUserNotificationCenter` API instead. I would kindly appreciate any contributions from folks that own a more modern Mac and are interested in implementing the OSX backend using the new API.
 
 # License
 
