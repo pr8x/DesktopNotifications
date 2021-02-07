@@ -10,7 +10,6 @@
         }
 
         /// <summary>
-        /// 
         /// </summary>
         public Notification Notification { get; }
     }

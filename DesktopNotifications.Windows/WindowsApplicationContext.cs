@@ -18,14 +18,15 @@ namespace DesktopNotifications.Windows
         private static extern void SetCurrentProcessExplicitAppUserModelID(
             [MarshalAs(UnmanagedType.LPWStr)] string appId);
 
-        public static WindowsApplicationContext FromCurrentProcess(string? customName = null,
+        public static WindowsApplicationContext FromCurrentProcess(
+            string? customName = null,
             string? appUserModelId = null)
         {
-            var aumid = appUserModelId ?? Guid.NewGuid().ToString();
+            var mainModule = Process.GetCurrentProcess().MainModule;
+            var appName = customName ?? Path.GetFileNameWithoutExtension(mainModule.FileName);
+            var aumid = appUserModelId ?? appName; //TODO: Add seeded bits to avoid collisions?
 
             SetCurrentProcessExplicitAppUserModelID(aumid);
-
-            var mainModule = Process.GetCurrentProcess().MainModule;
 
             using var shortcut = new ShellLink
             {
@@ -36,7 +37,6 @@ namespace DesktopNotifications.Windows
 
             var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             var startMenuPath = Path.Combine(appData, @"Microsoft\Windows\Start Menu\Programs");
-            var appName = customName ?? Path.GetFileNameWithoutExtension(mainModule.FileName);
             var shortcutFile = Path.Combine(startMenuPath, $"{appName}.lnk");
 
             shortcut.Save(shortcutFile);

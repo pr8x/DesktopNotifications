@@ -9,17 +9,21 @@ namespace DesktopNotifications
     public interface INotificationManager : IDisposable
     {
         /// <summary>
+        /// </summary>
+        string? LaunchActionId { get; }
+
+        /// <summary>
         /// Raised when a notification was activated. The notion of "activation" varies from platform to platform.
         /// </summary>
         event EventHandler<NotificationActivatedEventArgs> NotificationActivated;
 
         /// <summary>
-        /// Raised when a notification was dismissed. The exact reason can be found in <see cref="NotificationDismissedEventArgs"/>.
+        /// Raised when a notification was dismissed. The exact reason can be found in
+        /// <see cref="NotificationDismissedEventArgs" />.
         /// </summary>
         event EventHandler<NotificationDismissedEventArgs> NotificationDismissed;
 
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
         ValueTask Initialize();

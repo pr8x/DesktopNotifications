@@ -39,6 +39,8 @@ namespace DesktopNotifications.FreeDesktop
         public event EventHandler<NotificationActivatedEventArgs>? NotificationActivated;
         public event EventHandler<NotificationDismissedEventArgs>? NotificationDismissed;
 
+        public string? LaunchActionId { get; }
+
         public async ValueTask Initialize()
         {
             _connection = Connection.Session;

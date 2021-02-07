@@ -31,6 +31,11 @@ namespace Example.Avalonia
             _notificationManager = AvaloniaLocator.Current.GetService<INotificationManager>();
             _notificationManager.NotificationActivated += OnNotificationActivated;
             _notificationManager.NotificationDismissed += OnNotificationDismissed;
+
+            if (_notificationManager.LaunchActionId != null)
+            {
+                ((IList<string>) _eventsListBox.Items).Add($"Launch action: {_notificationManager.LaunchActionId}");
+            }
         }
 
         private void OnNotificationDismissed(object? sender, NotificationDismissedEventArgs e)

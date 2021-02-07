@@ -10,12 +10,11 @@ namespace DesktopNotifications.Windows
 {
     public class WindowsNotificationManager : INotificationManager
     {
+        private const int LaunchNotificationWaitMs = 5_000;
         private readonly WindowsApplicationContext _applicationContext;
+        private readonly TaskCompletionSource<string>? _launchActionPromise;
         private readonly Dictionary<ToastNotification, Notification> _notifications;
         private readonly ToastNotifier _toastNotifier;
-        private string? _launchAction;
-        private TaskCompletionSource<string?>? _launchActionPromise;
-        private EventHandler<NotificationActivatedEventArgs>? _notificationActivatedHandler;
 
         /// <summary>
         /// </summary>
@@ -23,35 +22,31 @@ namespace DesktopNotifications.Windows
         public WindowsNotificationManager(WindowsApplicationContext? applicationContext = null)
         {
             _applicationContext = applicationContext ?? WindowsApplicationContext.FromCurrentProcess();
-            _toastNotifier = ToastNotificationManager.CreateToastNotifier(_applicationContext.AppUserModelId);
+            _launchActionPromise = new TaskCompletionSource<string>();
+
+            if (ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
+            {
+                ToastNotificationManagerCompat.OnActivated += OnAppActivated;
+
+                if (_launchActionPromise.Task.Wait(LaunchNotificationWaitMs))
+                {
+                    LaunchActionId = _launchActionPromise.Task.Result;
+                }
+            }
+
+            _toastNotifier = ToastNotificationManagerCompat.CreateToastNotifier();
             _notifications = new Dictionary<ToastNotification, Notification>();
         }
 
-        public event EventHandler<NotificationActivatedEventArgs>? NotificationActivated
-        {
-            add
-            {
-                _notificationActivatedHandler += value;
-                ProcessLaunchAction();
-            }
-            remove => _notificationActivatedHandler -= value;
-        }
+        public event EventHandler<NotificationActivatedEventArgs>? NotificationActivated;
 
         public event EventHandler<NotificationDismissedEventArgs>? NotificationDismissed;
 
-        public async ValueTask Initialize()
+        public string? LaunchActionId { get; }
+
+        public ValueTask Initialize()
         {
-            if (ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
-            {
-                _launchActionPromise = new TaskCompletionSource<string?>();
-                ToastNotificationManagerCompat.OnActivated += OnAppActivated;
-
-                _launchAction = await _launchActionPromise.Task;
-
-                Debug.Assert(_launchAction != null);
-
-                ProcessLaunchAction();
-            }
+            return default;
         }
 
         public ValueTask ShowNotification(Notification notification, DateTimeOffset? expirationTime)
@@ -79,20 +74,7 @@ namespace DesktopNotifications.Windows
 
         public void Dispose()
         {
-        }
-
-        private void ProcessLaunchAction()
-        {
-            if (_launchAction == null || _notificationActivatedHandler == null)
-            {
-                return;
-            }
-
-            //TODO: Lookup notification object from history?
-            _notificationActivatedHandler.Invoke(this,
-                new NotificationActivatedEventArgs(null!, _launchAction));
-
-            _launchAction = null;
+            ToastNotificationManagerCompat.Uninstall();
         }
 
         private static XmlDocument GenerateXml(Notification notification)
@@ -113,7 +95,9 @@ namespace DesktopNotifications.Windows
         private void OnAppActivated(ToastNotificationActivatedEventArgsCompat e)
         {
             Debug.Assert(_launchActionPromise != null);
-            _launchActionPromise.SetResult(e.Argument);
+
+            var actionId = GetActionId(e.Argument);
+            _launchActionPromise.SetResult(actionId);
         }
 
         private static void ToastNotificationOnFailed(ToastNotification sender, ToastFailedEventArgs args)
@@ -137,13 +121,18 @@ namespace DesktopNotifications.Windows
             _notifications.Remove(sender);
         }
 
+        private static string GetActionId(string argument)
+        {
+            return string.IsNullOrEmpty(argument) ? "default" : argument;
+        }
+
         private void ToastNotificationOnActivated(ToastNotification sender, object args)
         {
             var activationArgs = (ToastActivatedEventArgs) args;
             var notification = _notifications[sender];
-            var actionId = string.IsNullOrEmpty(activationArgs.Arguments) ? "default" : activationArgs.Arguments;
+            var actionId = GetActionId(activationArgs.Arguments);
 
-            _notificationActivatedHandler?.Invoke(this, new NotificationActivatedEventArgs(notification, actionId));
+            NotificationActivated?.Invoke(this, new NotificationActivatedEventArgs(notification, actionId));
         }
     }
 }

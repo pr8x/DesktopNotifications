@@ -15,8 +15,10 @@ namespace DesktopNotifications.Apple
         {
         }
 
-        public event EventHandler<NotificationActivatedEventArgs> NotificationActivated;
-        public event EventHandler<NotificationDismissedEventArgs> NotificationDismissed;
+        public event EventHandler<NotificationActivatedEventArgs>? NotificationActivated;
+        public event EventHandler<NotificationDismissedEventArgs>? NotificationDismissed;
+
+        public string? LaunchActionId { get; }
 
         public ValueTask Initialize()
         {

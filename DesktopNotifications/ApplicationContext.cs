@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DesktopNotifications
+﻿namespace DesktopNotifications
 {
     /// <summary>
-    /// 
     /// </summary>
     public class ApplicationContext
     {
@@ -15,9 +10,7 @@ namespace DesktopNotifications
         }
 
         /// <summary>
-        /// 
         /// </summary>
         public string Name { get; }
-
     }
 }

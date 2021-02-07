@@ -21,35 +21,34 @@ namespace DesktopNotifications.Avalonia
         public static TAppBuilder SetupDesktopNotifications<TAppBuilder>(this TAppBuilder builder)
             where TAppBuilder : AppBuilderBase<TAppBuilder>, new()
         {
-            return builder.AfterSetup(async b =>
+            INotificationManager manager;
+            var runtimeInfo = builder.RuntimePlatform.GetRuntimeInfo();
+
+            switch (runtimeInfo.OperatingSystem)
             {
-                var runtimeInfo = b.RuntimePlatform.GetRuntimeInfo();
-                INotificationManager manager;
-
-                switch (runtimeInfo.OperatingSystem)
+                case OperatingSystemType.WinNT:
                 {
-                    case OperatingSystemType.WinNT:
-                    {
-                        var context = WindowsApplicationContext.FromCurrentProcess(b.Instance.Name);
-                        manager = new WindowsNotificationManager(context);
-                        break;
-                    }
-
-                    case OperatingSystemType.Linux:
-                    {
-                        var context = FreeDesktopApplicationContext.FromCurrentProcess();
-                        manager = new FreeDesktopNotificationManager(context);
-                        break;
-                    }
-
-                    //TODO: OSX once implemented/stable
-                    default: return;
+                    var context = WindowsApplicationContext.FromCurrentProcess();
+                    manager = new WindowsNotificationManager(context);
+                    break;
                 }
 
-                await manager.Initialize();
+                case OperatingSystemType.Linux:
+                {
+                    var context = FreeDesktopApplicationContext.FromCurrentProcess();
+                    manager = new FreeDesktopNotificationManager(context);
+                    break;
+                }
 
-                AvaloniaLocator.CurrentMutable.Bind<INotificationManager>().ToConstant(manager);
-            });
+                //TODO: OSX once implemented/stable
+                default: return builder;
+            }
+
+            //manager.Initialize();
+
+            AvaloniaLocator.CurrentMutable.Bind<INotificationManager>().ToConstant(manager);
+
+            return builder;
         }
     }
 }
