@@ -10,10 +10,6 @@ namespace Example
 {
     internal class Program
     {
-        [DllImport("shell32.dll", SetLastError = true)]
-        internal static extern void SetCurrentProcessExplicitAppUserModelID(
-            [MarshalAs(UnmanagedType.LPWStr)] string appId);
-
         private static INotificationManager CreateManager()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
