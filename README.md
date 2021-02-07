@@ -24,7 +24,9 @@ A cross-platform C# library for desktop "toast" notifications.
 # Avalonia
 
 The `DesktopNotifications.Avalonia` package offers support for the [Avalonia](https://github.com/AvaloniaUI/Avalonia) project. It doesn't do much on its own, it just provides helpers to register
-the `INotificationManager` with the application builder.
+the `INotificationManager` with the application builder. You can see an example of it in the Example.Avalonia project.
+
+
 
 # Help wanted
 
