@@ -34,4 +34,4 @@ My MacBook Pro is 11 years old now and it does not run OSX Mojave or higher. Unf
 
 # License
 
-See [License](License.md)
+See [License](LICENSE.md)
