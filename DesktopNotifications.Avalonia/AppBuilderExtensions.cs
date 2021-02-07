@@ -44,7 +44,8 @@ namespace DesktopNotifications.Avalonia
                 default: return builder;
             }
 
-            //manager.Initialize();
+            //TODO Any better way of doing this?
+            manager.Initialize().GetAwaiter().GetResult();
 
             AvaloniaLocator.CurrentMutable.Bind<INotificationManager>().ToConstant(manager);
 
