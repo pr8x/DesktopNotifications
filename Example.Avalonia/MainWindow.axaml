@@ -1,0 +1,20 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="400"
+        Width="400" Height="400"
+        x:Class="Example.Avalonia.MainWindow"
+        Title="Example.Avalonia">
+
+    <StackPanel Margin="20" Spacing="10">
+        <TextBox Name="TitleTextBox" Watermark="Title" UseFloatingWatermark="True" />
+        <TextBox Name="BodyTextBox" Watermark="Body" UseFloatingWatermark="True" />
+
+        <Button Click="Button_OnClick" Content="Show Notification" />
+
+        <TextBlock Foreground="Gray">Events:</TextBlock>
+        <ListBox Name="EventsListBox" Height="200" />
+    </StackPanel>
+
+</Window>

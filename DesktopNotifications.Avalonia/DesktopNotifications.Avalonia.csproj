@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DesktopNotifications.FreeDesktop\DesktopNotifications.FreeDesktop.csproj" />
+    <ProjectReference Include="..\DesktopNotifications.Windows\DesktopNotifications.Windows.csproj" />
+    <ProjectReference Include="..\DesktopNotifications\DesktopNotifications.csproj" />
+  </ItemGroup>
+
+</Project>
