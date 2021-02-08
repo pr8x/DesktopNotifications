@@ -3,6 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>A cross-platform C# library for native desktop "toast" notifications.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/pr8x/DesktopNotifications</PackageProjectUrl>
+    <Authors>DesktopNotifications.Apple</Authors>
+    <Product>DesktopNotifications.Apple</Product>
+    <Company>DesktopNotifications.Apple</Company>
   </PropertyGroup>
 
   <ItemGroup>
