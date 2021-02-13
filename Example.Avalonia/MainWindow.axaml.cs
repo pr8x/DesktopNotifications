@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -53,7 +54,7 @@ namespace Example.Avalonia
             AvaloniaXamlLoader.Load(this);
         }
 
-        public void Button_OnClick(object? sender, RoutedEventArgs e)
+        public void Show_OnClick(object? sender, RoutedEventArgs e)
         {
             Debug.Assert(_notificationManager != null);
 
@@ -62,6 +63,15 @@ namespace Example.Avalonia
                 Title = _titleTextBox.Text ?? _titleTextBox.Watermark,
                 Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark
             });
+        }
+
+        private void Schedule_OnClick(object? sender, RoutedEventArgs e)
+        {
+            _notificationManager.ScheduleNotification(new Notification
+            {
+                Title = _titleTextBox.Text ?? _titleTextBox.Watermark,
+                Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark
+            }, DateTimeOffset.Now + TimeSpan.FromSeconds(5));
         }
     }
 }

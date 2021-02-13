@@ -31,5 +31,11 @@ namespace DesktopNotifications.Apple
 
             return default;
         }
+
+        public ValueTask ScheduleNotification(Notification notification, DateTimeOffset deliveryTime,
+            DateTimeOffset? expirationTime = null)
+        {
+            return default;
+        }
     }
 }

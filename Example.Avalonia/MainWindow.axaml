@@ -11,7 +11,8 @@
         <TextBox Name="TitleTextBox" Watermark="Title" UseFloatingWatermark="True" />
         <TextBox Name="BodyTextBox" Watermark="Body" UseFloatingWatermark="True" />
 
-        <Button Click="Button_OnClick" Content="Show Notification" />
+        <Button Click="Show_OnClick" Content="Show Notification" />
+        <Button Click="Schedule_OnClick" Content="Schedule notification (in 5 Seconds)" />
 
         <TextBlock Foreground="Gray">Events:</TextBlock>
         <ListBox Name="EventsListBox" Height="200" />

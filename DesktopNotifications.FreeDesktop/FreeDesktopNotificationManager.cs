@@ -69,6 +69,11 @@ namespace DesktopNotifications.FreeDesktop
                 throw new InvalidOperationException("Not connected. Call Initialize() first.");
             }
 
+            if (expirationTime < DateTimeOffset.Now)
+            {
+                throw new ArgumentException(nameof(expirationTime));
+            }
+
             var duration = expirationTime - DateTimeOffset.Now;
             var actions = GenerateActions(notification);
 
@@ -84,6 +89,23 @@ namespace DesktopNotifications.FreeDesktop
             ).ConfigureAwait(false);
 
             _activeNotifications[id] = notification;
+        }
+
+        public async ValueTask ScheduleNotification(
+            Notification notification,
+            DateTimeOffset deliveryTime,
+            DateTimeOffset? expirationTime = null)
+        {
+            if (deliveryTime < DateTimeOffset.Now || deliveryTime > expirationTime)
+            {
+                throw new ArgumentException(nameof(deliveryTime));
+            }
+
+            //Note: We could consider spawning some daemon that sends the notification at the specified time.
+            //For now we only allow to schedule notifications while the application is running.
+            await Task.Delay(deliveryTime - DateTimeOffset.Now);
+
+            await ShowNotification(notification, expirationTime);
         }
 
         private static IEnumerable<string> GenerateActions(Notification notification)

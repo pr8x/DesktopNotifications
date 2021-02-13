@@ -72,9 +72,29 @@ namespace DesktopNotifications.Windows
             return default;
         }
 
+        public ValueTask ScheduleNotification(
+            Notification notification,
+            DateTimeOffset deliveryTime,
+            DateTimeOffset? expirationTime = null)
+        {
+            if (deliveryTime < DateTimeOffset.Now || deliveryTime > expirationTime)
+            {
+                throw new ArgumentException(nameof(deliveryTime));
+            }
+
+            var xmlContent = GenerateXml(notification);
+            var toastNotification = new ScheduledToastNotification(xmlContent, deliveryTime)
+            {
+                ExpirationTime = expirationTime
+            };
+
+            _toastNotifier.AddToSchedule(toastNotification);
+
+            return default;
+        }
+
         public void Dispose()
         {
-            ToastNotificationManagerCompat.Uninstall();
         }
 
         private static XmlDocument GenerateXml(Notification notification)
@@ -107,7 +127,12 @@ namespace DesktopNotifications.Windows
 
         private void ToastNotificationOnDismissed(ToastNotification sender, ToastDismissedEventArgs args)
         {
-            var notification = _notifications[sender];
+            if (!_notifications.Remove(sender, out var notification))
+            {
+                Debug.Assert(false);
+                return;
+            }
+
             var reason = args.Reason switch
             {
                 ToastDismissalReason.UserCanceled => NotificationDismissReason.User,
@@ -117,8 +142,6 @@ namespace DesktopNotifications.Windows
             };
 
             NotificationDismissed?.Invoke(this, new NotificationDismissedEventArgs(notification, reason));
-
-            _notifications.Remove(sender);
         }
 
         private static string GetActionId(string argument)

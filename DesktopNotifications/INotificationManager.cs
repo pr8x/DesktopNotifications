@@ -9,6 +9,11 @@ namespace DesktopNotifications
     public interface INotificationManager : IDisposable
     {
         /// <summary>
+        /// The action identifier the process was launched with.
+        /// <remarks>
+        /// "default" denotes the platform-specific default action.
+        /// On Windows this means the user simply clicked the notification body.
+        /// </remarks>
         /// </summary>
         string? LaunchActionId { get; }
 
@@ -24,6 +29,7 @@ namespace DesktopNotifications
         event EventHandler<NotificationDismissedEventArgs> NotificationDismissed;
 
         /// <summary>
+        /// Initialized the notification manager.
         /// </summary>
         /// <returns></returns>
         ValueTask Initialize();
@@ -34,5 +40,16 @@ namespace DesktopNotifications
         /// <param name="notification">The notification to present.</param>
         /// <param name="expirationTime">The expiration time marking the point when the notification gets removed.</param>
         ValueTask ShowNotification(Notification notification, DateTimeOffset? expirationTime = null);
+
+        /// <summary>
+        /// </summary>
+        /// <param name="notification"></param>
+        /// <param name="deliveryTime"></param>
+        /// <param name="expirationTime"></param>
+        /// <returns></returns>
+        ValueTask ScheduleNotification(
+            Notification notification, 
+            DateTimeOffset deliveryTime,
+            DateTimeOffset? expirationTime = null);
     }
 }
