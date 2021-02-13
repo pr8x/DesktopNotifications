@@ -129,7 +129,6 @@ namespace DesktopNotifications.Windows
         {
             if (!_notifications.Remove(sender, out var notification))
             {
-                Debug.Assert(false);
                 return;
             }
 
