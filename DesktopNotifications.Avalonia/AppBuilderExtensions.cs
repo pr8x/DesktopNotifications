@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform;
 using DesktopNotifications.FreeDesktop;
 using DesktopNotifications.Windows;
@@ -46,6 +47,17 @@ namespace DesktopNotifications.Avalonia
 
             //TODO Any better way of doing this?
             manager.Initialize().GetAwaiter().GetResult();
+
+            builder.AfterSetup(b =>
+            {
+                if (b.Instance.ApplicationLifetime is IControlledApplicationLifetime lifetime)
+                {
+                    lifetime.Exit += (s, e) =>
+                    {
+                        manager.Dispose();
+                    };
+                }
+            });
 
             AvaloniaLocator.CurrentMutable.Bind<INotificationManager>().ToConstant(manager);
 
