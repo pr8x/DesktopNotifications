@@ -15,13 +15,14 @@ A cross-platform C# library for native desktop "toast" notifications.
 |                          | Windows | Linux (FreeDesktop) | OSX |
 |--------------------------|---------|---------------------|-----|
 | Show notifications  | ✓       | ✓                   | ✕   |
-| Schedule notifications | ✕       | ✕                   | ✕   |
-| Launch actions¹           | ✓       | ✕                   |  ✕   |
+| Schedule notifications | ✓       | ✓*                   | ✕   |
+| Launch actions**         | ✓       | ✕                   |  ✕   |
 | Replacing notifications                | ✕       | ✕                   |  ✕   |
 | Buttons                  | ✓       | ✓                   |  ✕   |
 | Advanced content (Audio, Images, etc)                  | ✕       | ✕                   |  ✕   |
 
-<sub> ¹ Some platforms support launching your application when the user clicked a notification. The associated action identifier is passed as a command-line argument. </sub>
+<sub> * Scheduled notifications will only be delivered while the application is running. </sub>  
+<sub> ** Some platforms support launching your application when the user clicked a notification. The associated action identifier is passed as a command-line argument. </sub>
 
 # Avalonia
 
