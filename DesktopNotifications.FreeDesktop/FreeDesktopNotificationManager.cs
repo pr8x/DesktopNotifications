@@ -136,8 +136,14 @@ namespace DesktopNotifications.FreeDesktop
         private void OnNotificationClosed((uint id, uint reason) @event)
         {
             _activeNotifications.Remove(@event.id, out var notification);
-            Debug.Assert(notification != null);
 
+            //TODO: Not sure why but it calls this event twice sometimes
+            //In this case the notification has already been removed from the dict.
+            if (notification == null)
+            {
+                return;
+            }
+      
             var dismissReason = GetReason(@event.reason);
 
             NotificationDismissed?.Invoke(this,
