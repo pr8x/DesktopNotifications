@@ -23,6 +23,12 @@ namespace DesktopNotifications.Windows
             string? appUserModelId = null)
         {
             var mainModule = Process.GetCurrentProcess().MainModule;
+
+            if (mainModule?.FileName == null)
+            {
+                throw new InvalidOperationException();
+            }
+
             var appName = customName ?? Path.GetFileNameWithoutExtension(mainModule.FileName);
             var aumid = appUserModelId ?? appName; //TODO: Add seeded bits to avoid collisions?
 

@@ -14,7 +14,7 @@ namespace DesktopNotifications.Windows
         private readonly WindowsApplicationContext _applicationContext;
         private readonly TaskCompletionSource<string>? _launchActionPromise;
         private readonly Dictionary<ToastNotification, Notification> _notifications;
-        private readonly ToastNotifier _toastNotifier;
+        private readonly ToastNotifierCompat _toastNotifier;
 
         /// <summary>
         /// </summary>
