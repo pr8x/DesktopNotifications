@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace DesktopNotifications.FreeDesktop
@@ -19,6 +20,12 @@ namespace DesktopNotifications.FreeDesktop
         public static FreeDesktopApplicationContext FromCurrentProcess(string? appIcon = null)
         {
             var mainModule = Process.GetCurrentProcess().MainModule;
+
+            if (mainModule?.FileName == null)
+            {
+                throw new InvalidOperationException("No valid process module found.");
+            }
+
             return new FreeDesktopApplicationContext(
                 Path.GetFileNameWithoutExtension(mainModule.FileName),
                 appIcon
