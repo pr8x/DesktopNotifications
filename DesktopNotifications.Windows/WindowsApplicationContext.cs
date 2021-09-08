@@ -26,7 +26,7 @@ namespace DesktopNotifications.Windows
 
             if (mainModule?.FileName == null)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("No valid process module found.");
             }
 
             var appName = customName ?? Path.GetFileNameWithoutExtension(mainModule.FileName);
