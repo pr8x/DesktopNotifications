@@ -1,19 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net5.0-windows10.0.17763.0</TargetFrameworks>
-    <Nullable>enable</Nullable>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>A cross-platform C# library for native desktop "toast" notifications.</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/pr8x/DesktopNotifications</PackageProjectUrl>
-    <Authors>DesktopNotifications.Apple</Authors>
-    <Product>DesktopNotifications.Apple</Product>
-    <Company>DesktopNotifications.Apple</Company>
-  </PropertyGroup>
+	<!--Note: Dotnet currently does not allow to build on non-windows platforms when a windows TFM is specified-->
+	<PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+		<TargetFramework>net5.0</TargetFramework>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+		<TargetFrameworks>net5.0-windows10.0.17763.0</TargetFrameworks>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DesktopNotifications\DesktopNotifications.csproj" />
-  </ItemGroup>
+	<PropertyGroup>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Description>A cross-platform C# library for native desktop "toast" notifications.</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/pr8x/DesktopNotifications</PackageProjectUrl>
+		<Authors>DesktopNotifications.Apple</Authors>
+		<Product>DesktopNotifications.Apple</Product>
+		<Company>DesktopNotifications.Apple</Company>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\DesktopNotifications\DesktopNotifications.csproj" />
+	</ItemGroup>
 
 </Project>

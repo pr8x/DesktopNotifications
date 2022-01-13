@@ -1,15 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFrameworks>netcoreapp3.1;net5.0-windows10.0.17763.0</TargetFrameworks>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
-   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DesktopNotifications.Avalonia\DesktopNotifications.Avalonia.csproj" />
-  </ItemGroup>
+
+	<!--Note: Dotnet currently does not allow to build on non-windows platforms when a windows TFM is specified-->
+	<PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+		<TargetFramework>net5.0</TargetFramework>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+		<TargetFrameworks>net5.0-windows10.0.17763.0</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="0.10.0" />
+		<PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
+		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\DesktopNotifications.Avalonia\DesktopNotifications.Avalonia.csproj" />
+	</ItemGroup>
 </Project>

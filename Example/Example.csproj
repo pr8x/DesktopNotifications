@@ -1,16 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp3.1;net5.0-windows10.0.17763.0</TargetFrameworks>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<!--Note: Dotnet currently does not allow to build on non-windows platforms when a windows TFM is specified-->
+	<PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+		<TargetFramework>net5.0</TargetFramework>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+		<TargetFrameworks>net5.0-windows10.0.17763.0</TargetFrameworks>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DesktopNotifications.Apple\DesktopNotifications.Apple.csproj" />
-    <ProjectReference Include="..\DesktopNotifications.FreeDesktop\DesktopNotifications.FreeDesktop.csproj" />
-    <ProjectReference Include="..\DesktopNotifications.Windows\DesktopNotifications.Windows.csproj" />
-    <ProjectReference Include="..\DesktopNotifications\DesktopNotifications.csproj" />
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\DesktopNotifications.Apple\DesktopNotifications.Apple.csproj" />
+		<ProjectReference Include="..\DesktopNotifications.FreeDesktop\DesktopNotifications.FreeDesktop.csproj" />
+		<ProjectReference Include="..\DesktopNotifications.Windows\DesktopNotifications.Windows.csproj" />
+		<ProjectReference Include="..\DesktopNotifications\DesktopNotifications.csproj" />
+	</ItemGroup>
 
 </Project>
