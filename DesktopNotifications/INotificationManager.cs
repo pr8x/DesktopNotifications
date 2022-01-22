@@ -32,14 +32,14 @@ namespace DesktopNotifications
         /// Initialized the notification manager.
         /// </summary>
         /// <returns></returns>
-        ValueTask Initialize();
+        Task Initialize();
 
         /// <summary>
         /// Schedules a notification for presentation.
         /// </summary>
         /// <param name="notification">The notification to present.</param>
         /// <param name="expirationTime">The expiration time marking the point when the notification gets removed.</param>
-        ValueTask ShowNotification(Notification notification, DateTimeOffset? expirationTime = null);
+        Task ShowNotification(Notification notification, DateTimeOffset? expirationTime = null);
 
         /// <summary>
         /// </summary>
@@ -47,7 +47,7 @@ namespace DesktopNotifications
         /// <param name="deliveryTime"></param>
         /// <param name="expirationTime"></param>
         /// <returns></returns>
-        ValueTask ScheduleNotification(
+        Task ScheduleNotification(
             Notification notification, 
             DateTimeOffset deliveryTime,
             DateTimeOffset? expirationTime = null);

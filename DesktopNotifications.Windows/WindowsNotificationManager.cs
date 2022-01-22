@@ -2,25 +2,31 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+
+#if WIN64
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 using Microsoft.Toolkit.Uwp.Notifications;
+#endif
 
 namespace DesktopNotifications.Windows
 {
     public class WindowsNotificationManager : INotificationManager
     {
+#if WIN64
         private const int LaunchNotificationWaitMs = 5_000;
         private readonly WindowsApplicationContext _applicationContext;
         private readonly TaskCompletionSource<string>? _launchActionPromise;
         private readonly Dictionary<ToastNotification, Notification> _notifications;
         private readonly ToastNotifierCompat _toastNotifier;
+#endif
 
         /// <summary>
         /// </summary>
         /// <param name="applicationContext"></param>
         public WindowsNotificationManager(WindowsApplicationContext? applicationContext = null)
         {
+#if WIN64
             _applicationContext = applicationContext ?? WindowsApplicationContext.FromCurrentProcess();
             _launchActionPromise = new TaskCompletionSource<string>();
 
@@ -36,6 +42,7 @@ namespace DesktopNotifications.Windows
 
             _toastNotifier = ToastNotificationManagerCompat.CreateToastNotifier();
             _notifications = new Dictionary<ToastNotification, Notification>();
+#endif
         }
 
         public event EventHandler<NotificationActivatedEventArgs>? NotificationActivated;
@@ -44,13 +51,14 @@ namespace DesktopNotifications.Windows
 
         public string? LaunchActionId { get; }
 
-        public ValueTask Initialize()
+        public Task Initialize()
         {
             return default;
         }
 
-        public ValueTask ShowNotification(Notification notification, DateTimeOffset? expirationTime)
+        public Task ShowNotification(Notification notification, DateTimeOffset? expirationTime)
         {
+#if WIN64
             if (expirationTime < DateTimeOffset.Now)
             {
                 throw new ArgumentException(nameof(expirationTime));
@@ -69,14 +77,18 @@ namespace DesktopNotifications.Windows
             _toastNotifier.Show(toastNotification);
             _notifications[toastNotification] = notification;
 
+#endif
+
             return default;
         }
 
-        public ValueTask ScheduleNotification(
+        public Task ScheduleNotification(
             Notification notification,
             DateTimeOffset deliveryTime,
             DateTimeOffset? expirationTime = null)
         {
+            
+#if WIN64
             if (deliveryTime < DateTimeOffset.Now || deliveryTime > expirationTime)
             {
                 throw new ArgumentException(nameof(deliveryTime));
@@ -89,6 +101,7 @@ namespace DesktopNotifications.Windows
             };
 
             _toastNotifier.AddToSchedule(toastNotification);
+#endif
 
             return default;
         }
@@ -97,6 +110,7 @@ namespace DesktopNotifications.Windows
         {
         }
 
+#if WIN64
         private static XmlDocument GenerateXml(Notification notification)
         {
             var builder = new ToastContentBuilder();
@@ -156,5 +170,6 @@ namespace DesktopNotifications.Windows
 
             NotificationActivated?.Invoke(this, new NotificationActivatedEventArgs(notification, actionId));
         }
+#endif
     }
 }

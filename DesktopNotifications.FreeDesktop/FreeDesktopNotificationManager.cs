@@ -41,7 +41,7 @@ namespace DesktopNotifications.FreeDesktop
 
         public string? LaunchActionId { get; }
 
-        public async ValueTask Initialize()
+        public async Task Initialize()
         {
             _connection = Connection.Session;
 
@@ -62,7 +62,7 @@ namespace DesktopNotifications.FreeDesktop
             );
         }
 
-        public async ValueTask ShowNotification(Notification notification, DateTimeOffset? expirationTime = null)
+        public async Task ShowNotification(Notification notification, DateTimeOffset? expirationTime = null)
         {
             if (_connection == null || _proxy == null)
             {
@@ -91,7 +91,7 @@ namespace DesktopNotifications.FreeDesktop
             _activeNotifications[id] = notification;
         }
 
-        public async ValueTask ScheduleNotification(
+        public async Task ScheduleNotification(
             Notification notification,
             DateTimeOffset deliveryTime,
             DateTimeOffset? expirationTime = null)
@@ -135,7 +135,9 @@ namespace DesktopNotifications.FreeDesktop
 
         private void OnNotificationClosed((uint id, uint reason) @event)
         {
-            _activeNotifications.Remove(@event.id, out var notification);
+            var notification = _activeNotifications[@event.id];
+            
+            _activeNotifications.Remove(@event.id);
 
             //TODO: Not sure why but it calls this event twice sometimes
             //In this case the notification has already been removed from the dict.
