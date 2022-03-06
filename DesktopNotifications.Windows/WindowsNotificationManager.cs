@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using XmlDocument = Windows.Data.Xml.Dom.XmlDocument;
 using Windows.UI.Notifications;
+using XmlDocument = Windows.Data.Xml.Dom.XmlDocument;
 
 #if NETSTANDARD
 using System.IO;
@@ -45,6 +45,7 @@ namespace DesktopNotifications.Windows
                     LaunchActionId = _launchActionPromise.Task.Result;
                 }
             }
+#endif
 
 #if NETSTANDARD
             _toastNotifier = ToastNotificationManager.CreateToastNotifier(_applicationContext.AppUserModelId);
@@ -53,7 +54,6 @@ namespace DesktopNotifications.Windows
 #endif
 
             _notifications = new Dictionary<ToastNotification, Notification>();
-#endif
         }
 
         public event EventHandler<NotificationActivatedEventArgs>? NotificationActivated;
@@ -117,9 +117,7 @@ namespace DesktopNotifications.Windows
 
         private static XmlDocument GenerateXml(Notification notification)
         {
-
 #if NETSTANDARD
-
             var sw = new StringWriter();
             var xw = XmlWriter.Create(sw, new XmlWriterSettings
             {

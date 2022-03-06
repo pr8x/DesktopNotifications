@@ -17,10 +17,14 @@
 		<PackageProjectUrl>https://github.com/pr8x/DesktopNotifications</PackageProjectUrl>
 	</PropertyGroup>
 
+	<ItemGroup Condition="'$(OS)' == 'Windows_NT'">
+		<Compile Remove="NullImpl_WindowsNotificationManager.cs" />
+	</ItemGroup>
+
 	<ItemGroup Condition="'$(OS)' != 'Windows_NT'">
-		<None Remove="ShellLink.cs" />
-		<None Remove="WindowsNotificationManager.cs" />
-		<None Remove="WindowsApplicationContext.cs" />
+		<Compile Remove="ShellLink.cs" />
+		<Compile Remove="WindowsNotificationManager.cs" />
+		<Compile Remove="WindowsApplicationContext.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
