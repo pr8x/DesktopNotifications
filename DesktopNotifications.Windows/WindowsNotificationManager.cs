@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
-#if WIN64
 using XmlDocument = Windows.Data.Xml.Dom.XmlDocument;
 using Windows.UI.Notifications;
 
@@ -14,13 +12,10 @@ using System.Diagnostics;
 using Microsoft.Toolkit.Uwp.Notifications;
 #endif
 
-#endif
-
 namespace DesktopNotifications.Windows
 {
     public class WindowsNotificationManager : INotificationManager
     {
-#if WIN64
         private const int LaunchNotificationWaitMs = 5_000;
         private readonly WindowsApplicationContext _applicationContext;
         private readonly TaskCompletionSource<string>? _launchActionPromise;
@@ -32,14 +27,11 @@ namespace DesktopNotifications.Windows
         private readonly ToastNotifierCompat _toastNotifier;
 #endif
 
-#endif
-
         /// <summary>
         /// </summary>
         /// <param name="applicationContext"></param>
         public WindowsNotificationManager(WindowsApplicationContext? applicationContext = null)
         {
-#if WIN64
             _applicationContext = applicationContext ?? WindowsApplicationContext.FromCurrentProcess();
             _launchActionPromise = new TaskCompletionSource<string>();
 
@@ -53,7 +45,6 @@ namespace DesktopNotifications.Windows
                     LaunchActionId = _launchActionPromise.Task.Result;
                 }
             }
-#endif
 
 #if NETSTANDARD
             _toastNotifier = ToastNotificationManager.CreateToastNotifier(_applicationContext.AppUserModelId);
@@ -78,7 +69,6 @@ namespace DesktopNotifications.Windows
 
         public Task ShowNotification(Notification notification, DateTimeOffset? expirationTime)
         {
-#if WIN64
             if (expirationTime < DateTimeOffset.Now)
             {
                 throw new ArgumentException(nameof(expirationTime));
@@ -97,8 +87,6 @@ namespace DesktopNotifications.Windows
             _toastNotifier.Show(toastNotification);
             _notifications[toastNotification] = notification;
 
-#endif
-
             return Task.CompletedTask;
         }
 
@@ -107,7 +95,6 @@ namespace DesktopNotifications.Windows
             DateTimeOffset deliveryTime,
             DateTimeOffset? expirationTime = null)
         {
-#if WIN64
             if (deliveryTime < DateTimeOffset.Now || deliveryTime > expirationTime)
             {
                 throw new ArgumentException(nameof(deliveryTime));
@@ -120,7 +107,6 @@ namespace DesktopNotifications.Windows
             };
 
             _toastNotifier.AddToSchedule(toastNotification);
-#endif
 
             return Task.CompletedTask;
         }
@@ -129,7 +115,6 @@ namespace DesktopNotifications.Windows
         {
         }
 
-#if WIN64
         private static XmlDocument GenerateXml(Notification notification)
         {
 
@@ -248,6 +233,5 @@ namespace DesktopNotifications.Windows
 
             NotificationActivated?.Invoke(this, new NotificationActivatedEventArgs(notification, actionId));
         }
-#endif
     }
 }
