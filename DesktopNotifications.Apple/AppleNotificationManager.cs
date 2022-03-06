@@ -22,20 +22,20 @@ namespace DesktopNotifications.Apple
 
         public Task Initialize()
         {
-            return default;
+            return Task.CompletedTask;
         }
 
         public Task ShowNotification(Notification notification, DateTimeOffset? expirationTime = null)
         {
             ShowNotification();
 
-            return default;
+            return Task.CompletedTask;
         }
 
         public Task ScheduleNotification(Notification notification, DateTimeOffset deliveryTime,
             DateTimeOffset? expirationTime = null)
         {
-            return default;
+            return Task.CompletedTask;
         }
     }
 }

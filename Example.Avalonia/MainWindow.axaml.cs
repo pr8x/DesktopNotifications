@@ -62,7 +62,11 @@ namespace Example.Avalonia
             _notificationManager.ShowNotification(new Notification
             {
                 Title = _titleTextBox.Text ?? _titleTextBox.Watermark,
-                Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark
+                Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark,
+                Buttons =
+                {
+                    ("This is awesome!", null)
+                }
             });
         }
 

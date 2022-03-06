@@ -20,7 +20,12 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\DesktopNotifications\DesktopNotifications.csproj" />
-		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.0.2" />
+		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications"
+		                  Condition="'$(TargetFramework)' != 'netstandard2.0'"
+		                  Version="7.0.2" />
+		<PackageReference Include="Microsoft.Windows.SDK.Contracts" 
+		                  Condition="'$(TargetFramework)' == 'netstandard2.0'"
+		                  Version="10.0.22000.196" />
 	</ItemGroup>
 
 </Project>
