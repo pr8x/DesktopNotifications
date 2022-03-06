@@ -65,7 +65,7 @@ namespace Example.Avalonia
                 Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark,
                 Buttons =
                 {
-                    ("This is awesome!", null)
+                    ("This is awesome!", "awesome")
                 }
             });
         }
