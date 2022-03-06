@@ -169,7 +169,7 @@ namespace DesktopNotifications.Windows
                 xw.WriteStartElement("action");
                 xw.WriteAttributeString("content", title);
                 xw.WriteAttributeString("activationType", "foreground");
-                xw.WriteAttributeString("arguments", actionId ?? string.Empty);
+                xw.WriteAttributeString("arguments", actionId);
                 xw.WriteEndElement();
             }
 
@@ -192,7 +192,7 @@ namespace DesktopNotifications.Windows
 
             foreach (var (title, actionId) in notification.Buttons)
             {
-                builder.AddButton(title, ToastActivationType.Foreground, actionId ?? string.Empty);
+                builder.AddButton(title, ToastActivationType.Foreground, actionId);
             }
 
             return builder.GetXml();
