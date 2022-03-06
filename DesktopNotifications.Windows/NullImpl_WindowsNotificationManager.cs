@@ -5,20 +5,31 @@ using System.Threading.Tasks;
 
 namespace DesktopNotifications.Windows
 {
-    internal class WindowsApplicationContext : ApplicationContext
+    public class WindowsApplicationContext : ApplicationContext
     {
         public static WindowsApplicationContext FromCurrentProcess(
             string? customName = null,
             string? appUserModelId = null)
         {
+            throw new PlatformNotSupportedException();
+        }
+
+        public WindowsApplicationContext(string name) : base(name)
+        {
+            throw new PlatformNotSupportedException();
         }
     }
 
-    internal class WindowsNotificationManager : INotificationManager
+    public class WindowsNotificationManager : INotificationManager
     {
+        public WindowsNotificationManager(WindowsApplicationContext? context = null)
+        {
+            throw new PlatformNotSupportedException();
+        }
+
         public void Dispose()
         {
-            throw new NotImplementedException();
+            throw new PlatformNotSupportedException();
         }
 
         public string? LaunchActionId { get; }
@@ -29,18 +40,18 @@ namespace DesktopNotifications.Windows
 
         public Task Initialize()
         {
-            throw new NotImplementedException();
+            throw new PlatformNotSupportedException();
         }
 
         public Task ShowNotification(Notification notification, DateTimeOffset? expirationTime = null)
         {
-            throw new NotImplementedException();
+            throw new PlatformNotSupportedException();
         }
 
         public Task ScheduleNotification(Notification notification, DateTimeOffset deliveryTime,
             DateTimeOffset? expirationTime = null)
         {
-            throw new NotImplementedException();
+            throw new PlatformNotSupportedException();
         }
     }
 }
