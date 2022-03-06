@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using XmlDocument = Windows.Data.Xml.Dom.XmlDocument;
 
 #if WIN64
+using XmlDocument = Windows.Data.Xml.Dom.XmlDocument;
 using Windows.UI.Notifications;
 
 #if NETSTANDARD
