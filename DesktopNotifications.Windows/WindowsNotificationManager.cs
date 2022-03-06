@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
-using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
+using XmlDocument = Windows.Data.Xml.Dom.XmlDocument;
+
+#if NETSTANDARD
+using System.IO;
+using System.Xml;
+#else
+using System.Diagnostics;
 using Microsoft.Toolkit.Uwp.Notifications;
+#endif
 
 namespace DesktopNotifications.Windows
 {
@@ -14,7 +20,12 @@ namespace DesktopNotifications.Windows
         private readonly WindowsApplicationContext _applicationContext;
         private readonly TaskCompletionSource<string>? _launchActionPromise;
         private readonly Dictionary<ToastNotification, Notification> _notifications;
+
+#if NETSTANDARD
+        private readonly ToastNotifier _toastNotifier;
+#else
         private readonly ToastNotifierCompat _toastNotifier;
+#endif
 
         /// <summary>
         /// </summary>
@@ -24,6 +35,7 @@ namespace DesktopNotifications.Windows
             _applicationContext = applicationContext ?? WindowsApplicationContext.FromCurrentProcess();
             _launchActionPromise = new TaskCompletionSource<string>();
 
+#if !NETSTANDARD
             if (ToastNotificationManagerCompat.WasCurrentProcessToastActivated())
             {
                 ToastNotificationManagerCompat.OnActivated += OnAppActivated;
@@ -33,8 +45,14 @@ namespace DesktopNotifications.Windows
                     LaunchActionId = _launchActionPromise.Task.Result;
                 }
             }
+#endif
 
+#if NETSTANDARD
+            _toastNotifier = ToastNotificationManager.CreateToastNotifier(_applicationContext.AppUserModelId);
+#else
             _toastNotifier = ToastNotificationManagerCompat.CreateToastNotifier();
+#endif
+
             _notifications = new Dictionary<ToastNotification, Notification>();
         }
 
@@ -44,12 +62,12 @@ namespace DesktopNotifications.Windows
 
         public string? LaunchActionId { get; }
 
-        public ValueTask Initialize()
+        public Task Initialize()
         {
-            return default;
+            return Task.CompletedTask;
         }
 
-        public ValueTask ShowNotification(Notification notification, DateTimeOffset? expirationTime)
+        public Task ShowNotification(Notification notification, DateTimeOffset? expirationTime)
         {
             if (expirationTime < DateTimeOffset.Now)
             {
@@ -69,10 +87,10 @@ namespace DesktopNotifications.Windows
             _toastNotifier.Show(toastNotification);
             _notifications[toastNotification] = notification;
 
-            return default;
+            return Task.CompletedTask;
         }
 
-        public ValueTask ScheduleNotification(
+        public Task ScheduleNotification(
             Notification notification,
             DateTimeOffset deliveryTime,
             DateTimeOffset? expirationTime = null)
@@ -90,7 +108,7 @@ namespace DesktopNotifications.Windows
 
             _toastNotifier.AddToSchedule(toastNotification);
 
-            return default;
+            return Task.CompletedTask;
         }
 
         public void Dispose()
@@ -99,6 +117,57 @@ namespace DesktopNotifications.Windows
 
         private static XmlDocument GenerateXml(Notification notification)
         {
+#if NETSTANDARD
+            var sw = new StringWriter();
+            var xw = XmlWriter.Create(sw, new XmlWriterSettings
+            {
+                OmitXmlDeclaration = true,
+                Indent = true
+            });
+
+            xw.WriteStartElement("toast");
+
+            xw.WriteStartElement("visual");
+
+            xw.WriteStartElement("binding");
+
+            xw.WriteAttributeString("template", "ToastGeneric");
+
+            xw.WriteStartElement("text");
+            xw.WriteString(notification.Title ?? string.Empty);
+            xw.WriteEndElement();
+
+            xw.WriteStartElement("text");
+            xw.WriteString(notification.Body ?? string.Empty);
+            xw.WriteEndElement();
+
+            xw.WriteEndElement();
+
+            xw.WriteEndElement();
+
+            xw.WriteStartElement("actions");
+            
+            foreach (var (title, actionId) in notification.Buttons)
+            {
+                xw.WriteStartElement("action");
+                xw.WriteAttributeString("content", title);
+                xw.WriteAttributeString("activationType", "foreground");
+                xw.WriteAttributeString("arguments", actionId);
+                xw.WriteEndElement();
+            }
+
+            xw.WriteEndElement();
+
+            xw.WriteEndElement();
+            xw.Flush();
+
+            var xmlStr = sw.ToString();
+            var xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(xmlStr);
+
+            return xmlDoc;
+
+#else
             var builder = new ToastContentBuilder();
 
             builder.AddText(notification.Title);
@@ -110,8 +179,11 @@ namespace DesktopNotifications.Windows
             }
 
             return builder.GetXml();
+
+#endif
         }
 
+#if !NETSTANDARD
         private void OnAppActivated(ToastNotificationActivatedEventArgsCompat e)
         {
             Debug.Assert(_launchActionPromise != null);
@@ -119,6 +191,7 @@ namespace DesktopNotifications.Windows
             var actionId = GetActionId(e.Argument);
             _launchActionPromise.SetResult(actionId);
         }
+#endif
 
         private static void ToastNotificationOnFailed(ToastNotification sender, ToastFailedEventArgs args)
         {
@@ -127,10 +200,12 @@ namespace DesktopNotifications.Windows
 
         private void ToastNotificationOnDismissed(ToastNotification sender, ToastDismissedEventArgs args)
         {
-            if (!_notifications.Remove(sender, out var notification))
+            if (!_notifications.TryGetValue(sender, out var notification))
             {
                 return;
             }
+
+            _notifications.Remove(sender);
 
             var reason = args.Reason switch
             {
@@ -150,7 +225,7 @@ namespace DesktopNotifications.Windows
 
         private void ToastNotificationOnActivated(ToastNotification sender, object args)
         {
-            var activationArgs = (ToastActivatedEventArgs) args;
+            var activationArgs = (ToastActivatedEventArgs)args;
             var notification = _notifications[sender];
             var actionId = GetActionId(activationArgs.Arguments);
 

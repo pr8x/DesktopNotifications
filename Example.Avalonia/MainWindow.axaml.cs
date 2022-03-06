@@ -29,7 +29,8 @@ namespace Example.Avalonia
             _eventsListBox = this.FindControl<ListBox>("EventsListBox");
             _eventsListBox.Items = new ObservableCollection<string>();
 
-            _notificationManager = AvaloniaLocator.Current.GetService<INotificationManager>();
+            _notificationManager = AvaloniaLocator.Current.GetService<INotificationManager>() ??
+                                   throw new InvalidOperationException("Missing notification manager");
             _notificationManager.NotificationActivated += OnNotificationActivated;
             _notificationManager.NotificationDismissed += OnNotificationDismissed;
 
@@ -61,7 +62,11 @@ namespace Example.Avalonia
             _notificationManager.ShowNotification(new Notification
             {
                 Title = _titleTextBox.Text ?? _titleTextBox.Watermark,
-                Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark
+                Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark,
+                Buttons =
+                {
+                    ("This is awesome!", "awesome")
+                }
             });
         }
 
