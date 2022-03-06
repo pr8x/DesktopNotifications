@@ -1,8 +1,19 @@
 ﻿using System;
 using System.Threading.Tasks;
 
+#pragma warning disable CS0067
+
 namespace DesktopNotifications.Windows
 {
+    internal class WindowsApplicationContext : ApplicationContext
+    {
+        public static WindowsApplicationContext FromCurrentProcess(
+            string? customName = null,
+            string? appUserModelId = null)
+        {
+        }
+    }
+
     internal class WindowsNotificationManager : INotificationManager
     {
         public void Dispose()
