@@ -134,7 +134,7 @@ namespace DesktopNotifications.FreeDesktop
 
         private void OnNotificationClosed((uint id, uint reason) @event)
         {
-            var notification = _activeNotifications[@event.id];
+            if (!_activeNotifications.TryGetValue(@event.id, out var notification)) return;
             
             _activeNotifications.Remove(@event.id);
 
@@ -158,7 +158,7 @@ namespace DesktopNotifications.FreeDesktop
 
         private void OnNotificationActionInvoked((uint id, string actionKey) @event)
         {
-            var notification = _activeNotifications[@event.id];
+            if (!_activeNotifications.TryGetValue(@event.id, out var notification)) return;
 
             NotificationActivated?.Invoke(this,
                 new NotificationActivatedEventArgs(notification, @event.actionKey));
