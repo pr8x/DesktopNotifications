@@ -10,7 +10,7 @@ using DesktopNotifications;
 
 namespace Example.Avalonia
 {
-    public class MainWindow : Window
+    public partial class MainWindow : Window
     {
         private readonly TextBox _bodyTextBox;
         private readonly ListBox _eventsListBox;
@@ -24,11 +24,12 @@ namespace Example.Avalonia
             this.AttachDevTools();
 #endif
 
-            _titleTextBox = this.FindControl<TextBox>("TitleTextBox");
-            _bodyTextBox = this.FindControl<TextBox>("BodyTextBox");
-            _eventsListBox = this.FindControl<ListBox>("EventsListBox");
-            _eventsListBox.Items = new ObservableCollection<string>();
+            _titleTextBox = this.FindControl<TextBox>("TitleTextBox")!;
+            _bodyTextBox = this.FindControl<TextBox>("BodyTextBox")!;
+            _eventsListBox = this.FindControl<ListBox>("EventsListBox")!;
+            _eventsListBox.ItemsSource = new ObservableCollection<string>()!;
 
+  
             _notificationManager = AvaloniaLocator.Current.GetService<INotificationManager>() ??
                                    throw new InvalidOperationException("Missing notification manager");
             _notificationManager.NotificationActivated += OnNotificationActivated;
@@ -36,18 +37,18 @@ namespace Example.Avalonia
 
             if (_notificationManager.LaunchActionId != null)
             {
-                ((IList<string>) _eventsListBox.Items).Add($"Launch action: {_notificationManager.LaunchActionId}");
+                ((IList<string>)_eventsListBox.ItemsSource!).Add($"Launch action: {_notificationManager.LaunchActionId}");
             }
         }
 
         private void OnNotificationDismissed(object? sender, NotificationDismissedEventArgs e)
         {
-            ((IList<string>) _eventsListBox.Items).Add($"Notification dismissed: {e.Reason}");
+            ((IList<string>) _eventsListBox.ItemsSource!).Add($"Notification dismissed: {e.Reason}");
         }
 
         private void OnNotificationActivated(object? sender, NotificationActivatedEventArgs e)
         {
-            ((IList<string>) _eventsListBox.Items).Add($"Notification activated: {e.ActionId}");
+            ((IList<string>)_eventsListBox.ItemsSource!).Add($"Notification activated: {e.ActionId}");
         }
 
         private void InitializeComponent()

@@ -1,14 +1,12 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Platform;
 using DesktopNotifications.FreeDesktop;
 using DesktopNotifications.Windows;
 
 namespace DesktopNotifications.Avalonia
 {
     /// <summary>
-    /// Extensions for <see cref="AppBuilderBase{TAppBuilder}"/>
+    /// Extensions for <see cref="AppBuilder"/>
     /// </summary>
     public static class AppBuilderExtensions
     {
@@ -19,22 +17,20 @@ namespace DesktopNotifications.Avalonia
         /// <typeparam name="TAppBuilder"></typeparam>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static TAppBuilder SetupDesktopNotifications<TAppBuilder>(this TAppBuilder builder)
-            where TAppBuilder : AppBuilderBase<TAppBuilder>, new()
+        public static AppBuilder SetupDesktopNotifications(this AppBuilder builder)
         {
             INotificationManager manager;
-            var runtimeInfo = builder.RuntimePlatform.GetRuntimeInfo();
 
-            switch (runtimeInfo.OperatingSystem)
+            switch (System.Environment.OSVersion.Platform)
             {
-                case OperatingSystemType.WinNT:
+                case System.PlatformID.Win32NT:
                 {
                     var context = WindowsApplicationContext.FromCurrentProcess();
                     manager = new WindowsNotificationManager(context);
                     break;
                 }
 
-                case OperatingSystemType.Linux:
+                case System.PlatformID.Unix:
                 {
                     var context = FreeDesktopApplicationContext.FromCurrentProcess();
                     manager = new FreeDesktopNotificationManager(context);
@@ -50,7 +46,7 @@ namespace DesktopNotifications.Avalonia
 
             builder.AfterSetup(b =>
             {
-                if (b.Instance.ApplicationLifetime is IControlledApplicationLifetime lifetime)
+                if (b.Instance?.ApplicationLifetime is IControlledApplicationLifetime lifetime)
                 {
                     lifetime.Exit += (s, e) =>
                     {
@@ -59,7 +55,7 @@ namespace DesktopNotifications.Avalonia
                 }
             });
 
-            AvaloniaLocator.CurrentMutable.Bind<INotificationManager>().ToConstant(manager);
+            //AvaloniaLocator.CurrentMutable.Bind<INotificationManager>().ToConstant(manager);
 
             return builder;
         }
