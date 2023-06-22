@@ -4,18 +4,19 @@ namespace DesktopNotifications
 {
     public static class Extensions
     {
-        public static bool TryGetKey<K, V>(this IDictionary<K, V> instance, V value, out K key)
+        public static bool TryGetKey<K, V>(this IDictionary<K, V> dict, V value, out K key)
         {
-            foreach (var entry in instance)
+            foreach (var entry in dict)
             {
-                if (!entry.Value.Equals(value))
+                if (entry.Value?.Equals(value) == true)
                 {
-                    continue;
+                    key = entry.Key;
+                    return true;
                 }
-                key = entry.Key;
-                return true;
             }
-            key = default(K);
+
+            key = default!;
+
             return false;
         }
     }
