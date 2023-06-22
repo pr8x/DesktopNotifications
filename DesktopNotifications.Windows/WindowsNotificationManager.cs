@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.UI.Notifications;
 using XmlDocument = Windows.Data.Xml.Dom.XmlDocument;
-using System.Linq;
 
 #if NETSTANDARD
 using System.IO;
@@ -167,7 +166,7 @@ namespace DesktopNotifications.Windows
             xw.WriteEndElement();
 
             xw.WriteStartElement("actions");
-            
+
             foreach (var (title, actionId) in notification.Buttons)
             {
                 xw.WriteStartElement("action");

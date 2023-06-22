@@ -8,9 +8,6 @@ namespace DesktopNotifications.Apple
 {
     public class AppleNotificationManager : INotificationManager
     {
-        [DllImport("DesktopNotifications.Apple.Native.dylib")]
-        private static extern void ShowNotification();
-
         public void Dispose()
         {
         }
@@ -42,5 +39,8 @@ namespace DesktopNotifications.Apple
         {
             return Task.CompletedTask;
         }
+
+        [DllImport("DesktopNotifications.Apple.Native.dylib")]
+        private static extern void ShowNotification();
     }
 }

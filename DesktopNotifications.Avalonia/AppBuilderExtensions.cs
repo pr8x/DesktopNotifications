@@ -8,13 +8,13 @@ using DesktopNotifications.Windows;
 namespace DesktopNotifications.Avalonia
 {
     /// <summary>
-    /// Extensions for <see cref="AppBuilderBase{TAppBuilder}"/>
+    /// Extensions for <see cref="AppBuilderBase{TAppBuilder}" />
     /// </summary>
     public static class AppBuilderExtensions
     {
         /// <summary>
-        /// Setups the <see cref="INotificationManager"/> for the current platform and
-        /// binds it to the service locator (<see cref="AvaloniaLocator"/>).
+        /// Setups the <see cref="INotificationManager" /> for the current platform and
+        /// binds it to the service locator (<see cref="AvaloniaLocator" />).
         /// </summary>
         /// <typeparam name="TAppBuilder"></typeparam>
         /// <param name="builder"></param>
@@ -52,10 +52,7 @@ namespace DesktopNotifications.Avalonia
             {
                 if (b.Instance.ApplicationLifetime is IControlledApplicationLifetime lifetime)
                 {
-                    lifetime.Exit += (s, e) =>
-                    {
-                        manager.Dispose();
-                    };
+                    lifetime.Exit += (s, e) => { manager.Dispose(); };
                 }
             });
 

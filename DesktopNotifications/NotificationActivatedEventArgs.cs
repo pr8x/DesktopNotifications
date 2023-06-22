@@ -1,7 +1,6 @@
 ﻿namespace DesktopNotifications
 {
     /// <summary>
-    /// 
     /// </summary>
     public class NotificationActivatedEventArgs : NotificationEventArgs
     {
