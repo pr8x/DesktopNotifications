@@ -15,6 +15,7 @@ A cross-platform C# library for native desktop "toast" notifications.
 |                          | Windows | Linux (FreeDesktop.DBus) | OSX |
 |--------------------------|---------|---------------------|-----|
 | Show notifications  | ✓       | ✓                   | ✕   |
+| Hide notifications  | ✓       | ✓                   | ✕   |
 | Schedule notifications | ✓       | ✓*                   | ✕   |
 | Launch actions**         | ✓***       | ✕                   |  ✕   |
 | Replacing notifications                | ✕       | ✕                   |  ✕   |
