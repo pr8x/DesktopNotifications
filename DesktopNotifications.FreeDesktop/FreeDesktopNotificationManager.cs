@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Tmds.DBus;
+using static DesktopNotifications.Extensions;
 
 namespace DesktopNotifications.FreeDesktop
 {
@@ -63,10 +64,7 @@ namespace DesktopNotifications.FreeDesktop
 
         public async Task ShowNotification(Notification notification, DateTimeOffset? expirationTime = null)
         {
-            if (_connection == null || _proxy == null)
-            {
-                throw new InvalidOperationException("Not connected. Call Initialize() first.");
-            }
+            CheckConnection();
 
             if (expirationTime < DateTimeOffset.Now)
             {
@@ -76,18 +74,36 @@ namespace DesktopNotifications.FreeDesktop
             var duration = expirationTime - DateTimeOffset.Now;
             var actions = GenerateActions(notification);
 
-            var id = await _proxy.NotifyAsync(
+            var id = await _proxy!.NotifyAsync(
                 _appContext.Name,
                 0,
                 _appContext.AppIcon ?? string.Empty,
                 notification.Title ?? throw new ArgumentException(),
                 notification.Body ?? throw new ArgumentException(),
                 actions.ToArray(),
-                new Dictionary<string, object> {{"urgency", 1}},
+                new Dictionary<string, object> { { "urgency", 1 } },
                 duration?.Milliseconds ?? 0
             ).ConfigureAwait(false);
 
             _activeNotifications[id] = notification;
+        }
+
+        private void CheckConnection()
+        {
+            if (_connection == null || _proxy == null)
+            {
+                throw new InvalidOperationException("Not connected. Call Initialize() first.");
+            }
+        }
+
+        public async Task HideNotification(Notification notification)
+        {
+            CheckConnection();
+
+            if (_activeNotifications.TryGetKey(notification, out var id))
+            {
+                await _proxy!.CloseNotificationAsync(id);
+            }
         }
 
         public async Task ScheduleNotification(
@@ -95,6 +111,8 @@ namespace DesktopNotifications.FreeDesktop
             DateTimeOffset deliveryTime,
             DateTimeOffset? expirationTime = null)
         {
+            CheckConnection();
+
             if (deliveryTime < DateTimeOffset.Now || deliveryTime > expirationTime)
             {
                 throw new ArgumentException(nameof(deliveryTime));
@@ -135,7 +153,7 @@ namespace DesktopNotifications.FreeDesktop
         private void OnNotificationClosed((uint id, uint reason) @event)
         {
             if (!_activeNotifications.TryGetValue(@event.id, out var notification)) return;
-            
+
             _activeNotifications.Remove(@event.id);
 
             //TODO: Not sure why but it calls this event twice sometimes
@@ -144,7 +162,7 @@ namespace DesktopNotifications.FreeDesktop
             {
                 return;
             }
-      
+
             var dismissReason = GetReason(@event.reason);
 
             NotificationDismissed?.Invoke(this,

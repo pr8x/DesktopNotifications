@@ -48,6 +48,11 @@ namespace DesktopNotifications.Windows
             throw new PlatformNotSupportedException();
         }
 
+        public Task HideNotification(Notification notification)
+        {
+            throw new PlatformNotSupportedException();
+        }
+
         public Task ScheduleNotification(Notification notification, DateTimeOffset deliveryTime,
             DateTimeOffset? expirationTime = null)
         {

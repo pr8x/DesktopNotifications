@@ -37,5 +37,10 @@ namespace DesktopNotifications.Apple
         {
             return Task.CompletedTask;
         }
+
+        public Task HideNotification(Notification notification)
+        {
+            return Task.CompletedTask;
+        }
     }
 }
