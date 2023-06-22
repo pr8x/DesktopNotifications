@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Tmds.DBus;
-using static DesktopNotifications.Extensions;
 
 namespace DesktopNotifications.FreeDesktop
 {
     public class FreeDesktopNotificationManager : INotificationManager, IDisposable
     {
-        private readonly FreeDesktopApplicationContext _appContext;
         private const string NotificationsService = "org.freedesktop.Notifications";
 
         private static readonly ObjectPath NotificationsPath = new ObjectPath("/org/freedesktop/Notifications");
         private readonly Dictionary<uint, Notification> _activeNotifications;
+        private readonly FreeDesktopApplicationContext _appContext;
         private Connection? _connection;
         private IDisposable? _notificationActionSubscription;
         private IDisposable? _notificationCloseSubscription;
@@ -21,7 +20,6 @@ namespace DesktopNotifications.FreeDesktop
         private IFreeDesktopNotificationsProxy? _proxy;
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="appContext"></param>
         public FreeDesktopNotificationManager(FreeDesktopApplicationContext? appContext = null)
@@ -88,14 +86,6 @@ namespace DesktopNotifications.FreeDesktop
             _activeNotifications[id] = notification;
         }
 
-        private void CheckConnection()
-        {
-            if (_connection == null || _proxy == null)
-            {
-                throw new InvalidOperationException("Not connected. Call Initialize() first.");
-            }
-        }
-
         public async Task HideNotification(Notification notification)
         {
             CheckConnection();
@@ -123,6 +113,14 @@ namespace DesktopNotifications.FreeDesktop
             await Task.Delay(deliveryTime - DateTimeOffset.Now);
 
             await ShowNotification(notification, expirationTime);
+        }
+
+        private void CheckConnection()
+        {
+            if (_connection == null || _proxy == null)
+            {
+                throw new InvalidOperationException("Not connected. Call Initialize() first.");
+            }
         }
 
         private static IEnumerable<string> GenerateActions(Notification notification)

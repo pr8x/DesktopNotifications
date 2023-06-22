@@ -42,7 +42,7 @@ namespace DesktopNotifications
         Task ShowNotification(Notification notification, DateTimeOffset? expirationTime = null);
 
         /// <summary>
-        /// Hides an already delivered notification (if possible). 
+        /// Hides an already delivered notification (if possible).
         /// If the notification is scheduled for delivery the schedule will be cancelled.
         /// </summary>
         /// <param name="notification">The notification to hide</param>
@@ -55,7 +55,7 @@ namespace DesktopNotifications
         /// <param name="expirationTime"></param>
         /// <returns></returns>
         Task ScheduleNotification(
-            Notification notification, 
+            Notification notification,
             DateTimeOffset deliveryTime,
             DateTimeOffset? expirationTime = null);
     }

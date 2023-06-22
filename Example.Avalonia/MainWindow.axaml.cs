@@ -1,12 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using DesktopNotifications;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace Example.Avalonia
 {
@@ -14,8 +14,8 @@ namespace Example.Avalonia
     {
         private readonly TextBox _bodyTextBox;
         private readonly ListBox _eventsListBox;
-        private readonly TextBox _titleTextBox;
         private readonly INotificationManager _notificationManager;
+        private readonly TextBox _titleTextBox;
 
         private Notification? _lastNotification;
 
@@ -73,9 +73,9 @@ namespace Example.Avalonia
                     Title = _titleTextBox.Text ?? _titleTextBox.Watermark,
                     Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark,
                     Buttons =
-                {
-                    ("This is awesome!", "awesome")
-                }
+                    {
+                        ("This is awesome!", "awesome")
+                    }
                 };
 
                 await _notificationManager.ShowNotification(nf);
@@ -96,7 +96,6 @@ namespace Example.Avalonia
                 {
                     Title = _titleTextBox.Text ?? _titleTextBox.Watermark,
                     Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark
-
                 };
 
                 await _notificationManager.ScheduleNotification(
@@ -119,7 +118,6 @@ namespace Example.Avalonia
                 {
                     await _notificationManager.HideNotification(_lastNotification);
                 }
-
             }
             catch (Exception ex)
             {

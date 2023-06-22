@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Windows.UI.Notifications;
-using XmlDocument = Windows.Data.Xml.Dom.XmlDocument;
-using System.Linq;
-
-#if NETSTANDARD
+﻿#if NETSTANDARD
 using System.IO;
 using System.Xml;
 #else
 using System.Diagnostics;
 using Microsoft.Toolkit.Uwp.Notifications;
 #endif
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Windows.Data.Xml.Dom;
+using Windows.UI.Notifications;
 
 namespace DesktopNotifications.Windows
 {

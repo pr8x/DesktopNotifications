@@ -13,7 +13,7 @@
 
         <Button Click="Show_OnClick" Content="Show Notification" />
         <Button Click="Schedule_OnClick" Content="Schedule notification (in 5 Seconds)" />
-		<Button Click="HideLast_OnClick" Content="Hide last notification" />
+        <Button Click="HideLast_OnClick" Content="Hide last notification" />
 
         <TextBlock Foreground="Gray">Events:</TextBlock>
         <ListBox Name="EventsListBox" Height="200" />

@@ -20,27 +20,23 @@ namespace DesktopNotifications.Windows
         [Guid("000214F9-0000-0000-C000-000000000046")]
         private interface IShellLinkW
         {
-            uint GetPath([Out] [MarshalAs(UnmanagedType.LPWStr)]
-                StringBuilder pszFile,
+            uint GetPath([Out] [MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszFile,
                 int cchMaxPath, ref WIN32_FIND_DATAW pfd, uint fFlags);
 
             uint GetIDList(out IntPtr ppidl);
             uint SetIDList(IntPtr pidl);
 
-            uint GetDescription([Out] [MarshalAs(UnmanagedType.LPWStr)]
-                StringBuilder pszName,
+            uint GetDescription([Out] [MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszName,
                 int cchMaxName);
 
             uint SetDescription([MarshalAs(UnmanagedType.LPWStr)] string pszName);
 
-            uint GetWorkingDirectory([Out] [MarshalAs(UnmanagedType.LPWStr)]
-                StringBuilder pszDir,
+            uint GetWorkingDirectory([Out] [MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszDir,
                 int cchMaxPath);
 
             uint SetWorkingDirectory([MarshalAs(UnmanagedType.LPWStr)] string pszDir);
 
-            uint GetArguments([Out] [MarshalAs(UnmanagedType.LPWStr)]
-                StringBuilder pszArgs,
+            uint GetArguments([Out] [MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszArgs,
                 int cchMaxPath);
 
             uint SetArguments([MarshalAs(UnmanagedType.LPWStr)] string pszArgs);
@@ -49,8 +45,7 @@ namespace DesktopNotifications.Windows
             uint GetShowCmd(out int piShowCmd);
             uint SetShowCmd(int iShowCmd);
 
-            uint GetIconLocation([Out] [MarshalAs(UnmanagedType.LPWStr)]
-                StringBuilder pszIconPath,
+            uint GetIconLocation([Out] [MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszIconPath,
                 int cchIconPath, out int piIcon);
 
             uint SetIconLocation([MarshalAs(UnmanagedType.LPWStr)] string pszIconPath, int iIcon);
@@ -164,14 +159,14 @@ namespace DesktopNotifications.Windows
             // Value type (System.Runtime.InteropServices.VarEnum)
             public VarEnum VarType
             {
-                get => (VarEnum) valueType;
-                set => valueType = (ushort) value;
+                get => (VarEnum)valueType;
+                set => valueType = (ushort)value;
             }
 
             // Whether value is empty or null
             public bool IsNullOrEmpty =>
-                valueType == (ushort) VarEnum.VT_EMPTY ||
-                valueType == (ushort) VarEnum.VT_NULL;
+                valueType == (ushort)VarEnum.VT_EMPTY ||
+                valueType == (ushort)VarEnum.VT_NULL;
 
             // Value (only for string value)
             public string? Value => Marshal.PtrToStringUni(ptr);
@@ -192,7 +187,7 @@ namespace DesktopNotifications.Windows
                     throw new ArgumentException("Failed to set value.");
                 }
 
-                valueType = (ushort) VarEnum.VT_LPWSTR;
+                valueType = (ushort)VarEnum.VT_LPWSTR;
                 ptr = Marshal.StringToCoTaskMemUni(value);
             }
 
@@ -290,7 +285,7 @@ namespace DesktopNotifications.Windows
             get
             {
                 // No limitation to length of buffer string in the case of Unicode though.
-                StringBuilder targetPath = new StringBuilder(MAX_PATH);
+                var targetPath = new StringBuilder(MAX_PATH);
 
                 var data = new WIN32_FIND_DATAW();
 
@@ -307,7 +302,7 @@ namespace DesktopNotifications.Windows
             get
             {
                 // No limitation to length of buffer string in the case of Unicode though.
-                StringBuilder arguments = new StringBuilder(INFOTIPSIZE);
+                var arguments = new StringBuilder(INFOTIPSIZE);
 
                 VerifySucceeded(shellLinkW!.GetArguments(arguments, arguments.Capacity));
 
@@ -321,7 +316,7 @@ namespace DesktopNotifications.Windows
         {
             get
             {
-                using (PropVariant pv = new PropVariant())
+                using (var pv = new PropVariant())
                 {
                     VerifySucceeded(PropertyStore.GetValue(AppUserModelIDKey, pv));
 
@@ -335,7 +330,7 @@ namespace DesktopNotifications.Windows
             }
             set
             {
-                using (PropVariant pv = new PropVariant(value))
+                using (var pv = new PropVariant(value))
                 {
                     VerifySucceeded(PropertyStore.SetValue(AppUserModelIDKey, pv));
                     VerifySucceeded(PropertyStore.Commit());
@@ -357,7 +352,7 @@ namespace DesktopNotifications.Windows
         {
             try
             {
-                shellLinkW = (IShellLinkW) new CShellLink();
+                shellLinkW = (IShellLinkW)new CShellLink();
             }
             catch
             {
@@ -402,7 +397,7 @@ namespace DesktopNotifications.Windows
         // Save shortcut file.
         public void Save()
         {
-            string file = ShortcutFile;
+            var file = ShortcutFile;
 
             if (file == null)
             {
