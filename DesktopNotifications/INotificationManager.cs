@@ -35,11 +35,18 @@ namespace DesktopNotifications
         Task Initialize();
 
         /// <summary>
-        /// Schedules a notification for presentation.
+        /// Schedules a notification for delivery.
         /// </summary>
         /// <param name="notification">The notification to present.</param>
         /// <param name="expirationTime">The expiration time marking the point when the notification gets removed.</param>
         Task ShowNotification(Notification notification, DateTimeOffset? expirationTime = null);
+
+        /// <summary>
+        /// Hides an already delivered notification (if possible). 
+        /// If the notification is scheduled for delivery the schedule will be cancelled.
+        /// </summary>
+        /// <param name="notification">The notification to hide</param>
+        Task HideNotification(Notification notification);
 
         /// <summary>
         /// </summary>

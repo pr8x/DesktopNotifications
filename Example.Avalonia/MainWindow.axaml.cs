@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using DesktopNotifications;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Example.Avalonia
 {
@@ -16,6 +16,8 @@ namespace Example.Avalonia
         private readonly ListBox _eventsListBox;
         private readonly TextBox _titleTextBox;
         private readonly INotificationManager _notificationManager;
+
+        private Notification? _lastNotification;
 
         public MainWindow()
         {
@@ -36,18 +38,23 @@ namespace Example.Avalonia
 
             if (_notificationManager.LaunchActionId != null)
             {
-                ((IList<string>) _eventsListBox.Items).Add($"Launch action: {_notificationManager.LaunchActionId}");
+                RegisterEvent($"Launch action: {_notificationManager.LaunchActionId}");
             }
+        }
+
+        private void RegisterEvent(string @event)
+        {
+            ((IList<string>)_eventsListBox.Items).Add(@event);
         }
 
         private void OnNotificationDismissed(object? sender, NotificationDismissedEventArgs e)
         {
-            ((IList<string>) _eventsListBox.Items).Add($"Notification dismissed: {e.Reason}");
+            RegisterEvent($"Notification dismissed: {e.Reason}");
         }
 
         private void OnNotificationActivated(object? sender, NotificationActivatedEventArgs e)
         {
-            ((IList<string>) _eventsListBox.Items).Add($"Notification activated: {e.ActionId}");
+            RegisterEvent($"Notification activated: {e.ActionId}");
         }
 
         private void InitializeComponent()
@@ -55,28 +62,69 @@ namespace Example.Avalonia
             AvaloniaXamlLoader.Load(this);
         }
 
-        public void Show_OnClick(object? sender, RoutedEventArgs e)
+        public async void Show_OnClick(object? sender, RoutedEventArgs e)
         {
-            Debug.Assert(_notificationManager != null);
-
-            _notificationManager.ShowNotification(new Notification
+            try
             {
-                Title = _titleTextBox.Text ?? _titleTextBox.Watermark,
-                Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark,
-                Buttons =
+                Debug.Assert(_notificationManager != null);
+
+                var nf = new Notification
+                {
+                    Title = _titleTextBox.Text ?? _titleTextBox.Watermark,
+                    Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark,
+                    Buttons =
                 {
                     ("This is awesome!", "awesome")
                 }
-            });
+                };
+
+                await _notificationManager.ShowNotification(nf);
+
+                _lastNotification = nf;
+            }
+            catch (Exception ex)
+            {
+                RegisterEvent(ex.Message);
+            }
         }
 
-        private void Schedule_OnClick(object? sender, RoutedEventArgs e)
+        private async void Schedule_OnClick(object? sender, RoutedEventArgs e)
         {
-            _notificationManager.ScheduleNotification(new Notification
+            try
             {
-                Title = _titleTextBox.Text ?? _titleTextBox.Watermark,
-                Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark
-            }, DateTimeOffset.Now + TimeSpan.FromSeconds(5));
+                var nf = new Notification
+                {
+                    Title = _titleTextBox.Text ?? _titleTextBox.Watermark,
+                    Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark
+
+                };
+
+                await _notificationManager.ScheduleNotification(
+                    nf,
+                    DateTimeOffset.Now + TimeSpan.FromSeconds(5));
+
+                _lastNotification = nf;
+            }
+            catch (Exception ex)
+            {
+                RegisterEvent(ex.Message);
+            }
+        }
+
+        private async void HideLast_OnClick(object? sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (_lastNotification != null)
+                {
+                    await _notificationManager.HideNotification(_lastNotification);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                RegisterEvent(ex.Message);
+            }
         }
     }
 }

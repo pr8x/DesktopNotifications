@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.UI.Notifications;
 using XmlDocument = Windows.Data.Xml.Dom.XmlDocument;
+using System.Linq;
 
 #if NETSTANDARD
 using System.IO;
@@ -20,6 +21,7 @@ namespace DesktopNotifications.Windows
         private readonly WindowsApplicationContext _applicationContext;
         private readonly TaskCompletionSource<string>? _launchActionPromise;
         private readonly Dictionary<ToastNotification, Notification> _notifications;
+        private readonly Dictionary<ScheduledToastNotification, Notification> _scheduledNotification;
 
 #if NETSTANDARD
         private readonly ToastNotifier _toastNotifier;
@@ -54,6 +56,7 @@ namespace DesktopNotifications.Windows
 #endif
 
             _notifications = new Dictionary<ToastNotification, Notification>();
+            _scheduledNotification = new Dictionary<ScheduledToastNotification, Notification>();
         }
 
         public event EventHandler<NotificationActivatedEventArgs>? NotificationActivated;
@@ -90,6 +93,21 @@ namespace DesktopNotifications.Windows
             return Task.CompletedTask;
         }
 
+        public Task HideNotification(Notification notification)
+        {
+            if (_notifications.TryGetKey(notification, out var toastNotification))
+            {
+                _toastNotifier.Hide(toastNotification);
+            }
+
+            if (_scheduledNotification.TryGetKey(notification, out var scheduledToastNotification))
+            {
+                _toastNotifier.RemoveFromSchedule(scheduledToastNotification);
+            }
+
+            return Task.CompletedTask;
+        }
+
         public Task ScheduleNotification(
             Notification notification,
             DateTimeOffset deliveryTime,
@@ -107,12 +125,15 @@ namespace DesktopNotifications.Windows
             };
 
             _toastNotifier.AddToSchedule(toastNotification);
+            _scheduledNotification[toastNotification] = notification;
 
             return Task.CompletedTask;
         }
 
         public void Dispose()
         {
+            _notifications.Clear();
+            _scheduledNotification.Clear();
         }
 
         private static XmlDocument GenerateXml(Notification notification)
@@ -225,11 +246,17 @@ namespace DesktopNotifications.Windows
 
         private void ToastNotificationOnActivated(ToastNotification sender, object args)
         {
+            if (!_notifications.TryGetValue(sender, out var notification))
+            {
+                return;
+            }
+
             var activationArgs = (ToastActivatedEventArgs)args;
-            var notification = _notifications[sender];
             var actionId = GetActionId(activationArgs.Arguments);
 
-            NotificationActivated?.Invoke(this, new NotificationActivatedEventArgs(notification, actionId));
+            NotificationActivated?.Invoke(
+                this,
+                new NotificationActivatedEventArgs(notification, actionId));
         }
     }
 }
