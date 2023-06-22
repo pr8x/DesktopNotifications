@@ -1,15 +1,16 @@
-﻿#if NETSTANDARD
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Windows.UI.Notifications;
+using XmlDocument = Windows.Data.Xml.Dom.XmlDocument;
+
+#if NETSTANDARD
 using System.IO;
 using System.Xml;
 #else
 using System.Diagnostics;
 using Microsoft.Toolkit.Uwp.Notifications;
 #endif
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Windows.Data.Xml.Dom;
-using Windows.UI.Notifications;
 
 namespace DesktopNotifications.Windows
 {
@@ -165,7 +166,7 @@ namespace DesktopNotifications.Windows
             xw.WriteEndElement();
 
             xw.WriteStartElement("actions");
-            
+
             foreach (var (title, actionId) in notification.Buttons)
             {
                 xw.WriteStartElement("action");
