@@ -55,10 +55,15 @@ namespace DesktopNotifications.FreeDesktop
                 OnNotificationActionInvoked,
                 OnNotificationActionInvokedError
             );
+
             _notificationCloseSubscription = await _proxy.WatchNotificationClosedAsync(
                 OnNotificationClosed,
                 OnNotificationClosedError
             );
+
+            var caps = await _proxy.GetCapabilitiesAsync();
+
+            Console.WriteLine(string.Join(",", caps));
         }
 
         public async Task ShowNotification(Notification notification, DateTimeOffset? expirationTime = null)
@@ -187,7 +192,7 @@ namespace DesktopNotifications.FreeDesktop
                 new NotificationDismissedEventArgs(notification, dismissReason));
         }
 
-        private void OnNotificationActionInvokedError(Exception obj)
+        private static void OnNotificationActionInvokedError(Exception obj)
         {
             throw obj;
         }
