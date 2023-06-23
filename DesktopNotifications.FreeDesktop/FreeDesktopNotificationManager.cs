@@ -134,7 +134,7 @@ namespace DesktopNotifications.FreeDesktop
 
             if (notification.ImagePath is { } img)
             {
-                sb.AppendLine($@"<img src=""{img}"" alt=""{notification.ImageAltText}""/>");
+                sb.AppendLine($@"&lt;img src=""{img}"" alt=""{notification.ImageAltText}""/&gt;");
             }
 
             return sb.ToString();
