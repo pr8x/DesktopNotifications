@@ -161,6 +161,14 @@ namespace DesktopNotifications.Windows
             xw.WriteString(notification.Body ?? string.Empty);
             xw.WriteEndElement();
 
+            if (notification.ImagePath is { } img)
+            {
+                xw.WriteStartElement("image");
+                xw.WriteAttributeString("src", $"file:///{img}");
+                xw.WriteAttributeString("alt", notification.ImageAltText);
+                xw.WriteEndElement();
+            }
+
             xw.WriteEndElement();
 
             xw.WriteEndElement();
@@ -192,6 +200,11 @@ namespace DesktopNotifications.Windows
 
             builder.AddText(notification.Title);
             builder.AddText(notification.Body);
+
+            if (notification.ImagePath is { } img)
+            {
+                builder.AddInlineImage(new Uri($"file:///{img}"), notification.ImageAltText);
+            }
 
             foreach (var (title, actionId) in notification.Buttons)
             {

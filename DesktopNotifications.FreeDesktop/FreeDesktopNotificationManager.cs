@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Tmds.DBus;
 
@@ -77,13 +78,32 @@ namespace DesktopNotifications.FreeDesktop
                 0,
                 _appContext.AppIcon ?? string.Empty,
                 notification.Title ?? throw new ArgumentException(),
-                notification.Body ?? throw new ArgumentException(),
+                GenerateNotificationBody(notification),
                 actions.ToArray(),
                 new Dictionary<string, object> { { "urgency", 1 } },
                 duration?.Milliseconds ?? 0
             ).ConfigureAwait(false);
 
             _activeNotifications[id] = notification;
+        }
+
+        private static string GenerateNotificationBody(Notification notification)
+        {
+            if (notification.Body == null)
+            {
+                throw new ArgumentException();
+            }
+
+            var sb = new StringBuilder();
+
+            sb.AppendLine(notification.Body);
+
+            if (notification.ImagePath is { } img)
+            {
+                sb.AppendLine($@"<img src=""{img}"" alt=""{notification.ImageAltText}""/>");
+            }
+
+            return sb.ToString();
         }
 
         public async Task HideNotification(Notification notification)

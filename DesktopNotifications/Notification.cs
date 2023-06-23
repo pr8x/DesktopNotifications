@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DesktopNotifications
 {
@@ -14,6 +15,10 @@ namespace DesktopNotifications
         public string? Title { get; set; }
 
         public string? Body { get; set; }
+
+        public string? ImagePath { get; set; }
+
+        public string ImageAltText { get; set; } = "Image";
 
         public List<(string Title, string ActionId)> Buttons { get; }
     }

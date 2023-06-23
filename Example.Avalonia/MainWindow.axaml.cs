@@ -14,6 +14,7 @@ namespace Example.Avalonia
     {
         private readonly TextBox _bodyTextBox;
         private readonly ListBox _eventsListBox;
+        private readonly TextBox _imagePathTextBox;
         private readonly INotificationManager _notificationManager;
         private readonly TextBox _titleTextBox;
 
@@ -28,6 +29,7 @@ namespace Example.Avalonia
 
             _titleTextBox = this.FindControl<TextBox>("TitleTextBox");
             _bodyTextBox = this.FindControl<TextBox>("BodyTextBox");
+            _imagePathTextBox = this.FindControl<TextBox>("ImagePathTextBox");
             _eventsListBox = this.FindControl<ListBox>("EventsListBox");
             _eventsListBox.Items = new ObservableCollection<string>();
 
@@ -72,6 +74,7 @@ namespace Example.Avalonia
                 {
                     Title = _titleTextBox.Text ?? _titleTextBox.Watermark,
                     Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark,
+                    ImagePath = _imagePathTextBox.Text,
                     Buttons =
                     {
                         ("This is awesome!", "awesome")
