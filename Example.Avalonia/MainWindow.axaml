@@ -16,7 +16,7 @@
         <Button Click="Schedule_OnClick" Content="Schedule notification (in 5 Seconds)" />
         <Button Click="HideLast_OnClick" Content="Hide last notification" />
 
-        <TextBlock Foreground="Gray">Events:</TextBlock>
+        <TextBlock Foreground="Gray">Log:</TextBlock>
         <ListBox Name="LogListBox" Height="200" />
     </StackPanel>
 
