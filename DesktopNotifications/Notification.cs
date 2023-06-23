@@ -16,9 +16,9 @@ namespace DesktopNotifications
 
         public string? Body { get; set; }
 
-        public string? ImagePath { get; set; }
+        public string? BodyImagePath { get; set; }
 
-        public string ImageAltText { get; set; } = "Image";
+        public string BodyImageAltText { get; set; } = "Image";
 
         public List<(string Title, string ActionId)> Buttons { get; }
     }

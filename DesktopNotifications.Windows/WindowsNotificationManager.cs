@@ -58,6 +58,11 @@ namespace DesktopNotifications.Windows
             _scheduledNotification = new Dictionary<ScheduledToastNotification, Notification>();
         }
 
+        public NotificationManagerCapabilities Capabilities => NotificationManagerCapabilities.BodyText |
+                                                               NotificationManagerCapabilities.BodyImages |
+                                                               NotificationManagerCapabilities.Icon |
+                                                               NotificationManagerCapabilities.Audio;
+
         public event EventHandler<NotificationActivatedEventArgs>? NotificationActivated;
 
         public event EventHandler<NotificationDismissedEventArgs>? NotificationDismissed;
@@ -161,11 +166,11 @@ namespace DesktopNotifications.Windows
             xw.WriteString(notification.Body ?? string.Empty);
             xw.WriteEndElement();
 
-            if (notification.ImagePath is { } img)
+            if (notification.BodyImagePath is { } img)
             {
                 xw.WriteStartElement("image");
                 xw.WriteAttributeString("src", $"file:///{img}");
-                xw.WriteAttributeString("alt", notification.ImageAltText);
+                xw.WriteAttributeString("alt", notification.BodyImageAltText);
                 xw.WriteEndElement();
             }
 
@@ -201,9 +206,9 @@ namespace DesktopNotifications.Windows
             builder.AddText(notification.Title);
             builder.AddText(notification.Body);
 
-            if (notification.ImagePath is { } img)
+            if (notification.BodyImagePath is { } img)
             {
-                builder.AddInlineImage(new Uri($"file:///{img}"), notification.ImageAltText);
+                builder.AddInlineImage(new Uri($"file:///{img}"), notification.BodyImageAltText);
             }
 
             foreach (var (title, actionId) in notification.Buttons)

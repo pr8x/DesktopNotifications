@@ -18,6 +18,11 @@ namespace DesktopNotifications
         string? LaunchActionId { get; }
 
         /// <summary>
+        /// Retrieve the capabilities of the notification manager (and its respective platform backend)
+        /// </summary>
+        NotificationManagerCapabilities Capabilities { get; }
+
+        /// <summary>
         /// Raised when a notification was activated. The notion of "activation" varies from platform to platform.
         /// </summary>
         event EventHandler<NotificationActivatedEventArgs> NotificationActivated;

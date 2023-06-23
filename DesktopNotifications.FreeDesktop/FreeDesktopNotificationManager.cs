@@ -7,11 +7,22 @@ using Tmds.DBus;
 
 namespace DesktopNotifications.FreeDesktop
 {
-    public class FreeDesktopNotificationManager : INotificationManager, IDisposable
+    public class FreeDesktopNotificationManager : INotificationManager
     {
         private const string NotificationsService = "org.freedesktop.Notifications";
 
         private static readonly ObjectPath NotificationsPath = new ObjectPath("/org/freedesktop/Notifications");
+
+        private static Dictionary<string, NotificationManagerCapabilities> CapabilitiesMapping =
+            new Dictionary<string, NotificationManagerCapabilities>
+            {
+                { "body", NotificationManagerCapabilities.BodyText },
+                { "body-images", NotificationManagerCapabilities.BodyImages },
+                { "body-images", NotificationManagerCapabilities.BodyMarkup },
+                { "sound", NotificationManagerCapabilities.Audio },
+                { "icon", NotificationManagerCapabilities.Icon }
+            };
+
         private readonly Dictionary<uint, Notification> _activeNotifications;
         private readonly FreeDesktopApplicationContext _appContext;
         private Connection? _connection;
@@ -35,7 +46,11 @@ namespace DesktopNotifications.FreeDesktop
             _notificationCloseSubscription?.Dispose();
         }
 
+        public NotificationManagerCapabilities Capabilities { get; private set; } =
+            NotificationManagerCapabilities.None;
+
         public event EventHandler<NotificationActivatedEventArgs>? NotificationActivated;
+
         public event EventHandler<NotificationDismissedEventArgs>? NotificationDismissed;
 
         public string? LaunchActionId { get; }
@@ -61,9 +76,13 @@ namespace DesktopNotifications.FreeDesktop
                 OnNotificationClosedError
             );
 
-            var caps = await _proxy.GetCapabilitiesAsync();
-
-            Console.WriteLine(string.Join(",", caps));
+            foreach (var cap in await _proxy.GetCapabilitiesAsync())
+            {
+                if (CapabilitiesMapping.TryGetValue(cap, out var capE))
+                {
+                    Capabilities |= capE;
+                }
+            }
         }
 
         public async Task ShowNotification(Notification notification, DateTimeOffset? expirationTime = null)
@@ -132,9 +151,9 @@ namespace DesktopNotifications.FreeDesktop
 
             sb.AppendLine(notification.Body);
 
-            if (notification.ImagePath is { } img)
+            if (notification.BodyImagePath is { } img)
             {
-                sb.AppendLine($@"&lt;img src=""{img}"" alt=""{notification.ImageAltText}""/&gt;");
+                sb.AppendLine($@"<img src=""{img}"" alt=""{notification.BodyImageAltText}""/>");
             }
 
             return sb.ToString();
