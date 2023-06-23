@@ -50,7 +50,7 @@ jobs:
         with:
           dotnet-version: 6.0.x
           
-      - run: dotnet pack --configuration Release --output ${{ env.NuGetDirectory }} -p:GeneratePackageOnBuild=false
+      - run: dotnet pack --configuration Release --output ${{ env.NuGetDirectory }} -p:GeneratePackageOnBuild=false /p:PackageVersion=${{github.ref_name}}
 
       - uses: actions/upload-artifact@v3
         with:
