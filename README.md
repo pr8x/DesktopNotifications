@@ -17,14 +17,15 @@ A cross-platform C# library for native desktop "toast" notifications.
 | Show notifications  | ✓       | ✓                   | ✕   |
 | Hide notifications  | ✓       | ✓                   | ✕   |
 | Schedule notifications | ✓       | ✓*                   | ✕   |
-| Launch actions**         | ✓***       | ✕                   |  ✕   |
+| Launch actions         | ✓**       | ✕                   |  ✕   |
 | Replacing notifications                | ✕       | ✕                   |  ✕   |
 | Buttons                  | ✓       | ✓                   |  ✕   |
-| Advanced content (Audio, Images, etc)                  | ✕       | ✕                   |  ✕   |
+| Audio                  | ✕       | ✕                   |  ✕   |
+| Images                  | ✓       | ✓***                   |  ✕   |
 
 <sub> * Scheduled notifications will only be delivered while the application is running. </sub>  
-<sub> ** Some platforms support launching your application when the user clicked a notification. The associated action identifier is passed as a command-line argument. </sub>  
-<sub> *** This is currently not supported when targeting .netstandard
+<sub> ** This is currently not supported when targeting .netstandard </sub>
+<sub> *** If supported by the notification server </sub>
 
 # Application Context
 
