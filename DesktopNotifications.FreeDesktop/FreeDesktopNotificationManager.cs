@@ -18,7 +18,7 @@ namespace DesktopNotifications.FreeDesktop
             {
                 { "body", NotificationManagerCapabilities.BodyText },
                 { "body-images", NotificationManagerCapabilities.BodyImages },
-                { "body-images", NotificationManagerCapabilities.BodyMarkup },
+                { "body-markup", NotificationManagerCapabilities.BodyMarkup },
                 { "sound", NotificationManagerCapabilities.Audio },
                 { "icon", NotificationManagerCapabilities.Icon }
             };
