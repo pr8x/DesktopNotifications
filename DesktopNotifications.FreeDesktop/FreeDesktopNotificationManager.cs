@@ -140,7 +140,7 @@ namespace DesktopNotifications.FreeDesktop
             await ShowNotification(notification, expirationTime);
         }
 
-        private static string GenerateNotificationBody(Notification notification)
+        private string GenerateNotificationBody(Notification notification)
         {
             if (notification.Body == null)
             {
@@ -151,7 +151,8 @@ namespace DesktopNotifications.FreeDesktop
 
             sb.AppendLine(notification.Body);
 
-            if (notification.BodyImagePath is { } img)
+            if (Capabilities.HasFlag(NotificationManagerCapabilities.BodyImages) &&
+                notification.BodyImagePath is { } img)
             {
                 sb.AppendLine($@"<img src=""{img}"" alt=""{notification.BodyImageAltText}""/>");
             }

@@ -41,6 +41,12 @@ namespace Example.Avalonia
 
             Log($"Capabilities: {FormatFlagEnum(_notificationManager.Capabilities)}");
 
+            _bodyTextBox.IsEnabled =
+                _notificationManager.Capabilities.HasFlag(NotificationManagerCapabilities.BodyText);
+
+            _imagePathTextBox.IsEnabled =
+                _notificationManager.Capabilities.HasFlag(NotificationManagerCapabilities.BodyImages);
+
             if (_notificationManager.LaunchActionId != null)
             {
                 Log($"Launch action: {_notificationManager.LaunchActionId}");
@@ -51,7 +57,7 @@ namespace Example.Avalonia
         {
             var enumValues = (TEnum[])Enum.GetValues(typeof(TEnum));
 
-            return string.Join(",",
+            return string.Join(", ",
                 enumValues
                     .Where(x => Convert.ToInt32(x) != 0 && e.HasFlag(x))
                     .Select(x => x.ToString()));
