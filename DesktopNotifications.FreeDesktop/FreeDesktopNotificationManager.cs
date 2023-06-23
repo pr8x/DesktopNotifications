@@ -1,16 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Tmds.DBus;
 
 namespace DesktopNotifications.FreeDesktop
 {
-    public class FreeDesktopNotificationManager : INotificationManager, IDisposable
+    public class FreeDesktopNotificationManager : INotificationManager
     {
         private const string NotificationsService = "org.freedesktop.Notifications";
 
         private static readonly ObjectPath NotificationsPath = new ObjectPath("/org/freedesktop/Notifications");
+
+        private static Dictionary<string, NotificationManagerCapabilities> CapabilitiesMapping =
+            new Dictionary<string, NotificationManagerCapabilities>
+            {
+                { "body", NotificationManagerCapabilities.BodyText },
+                { "body-images", NotificationManagerCapabilities.BodyImages },
+                { "body-markup", NotificationManagerCapabilities.BodyMarkup },
+                { "sound", NotificationManagerCapabilities.Audio },
+                { "icon", NotificationManagerCapabilities.Icon }
+            };
+
         private readonly Dictionary<uint, Notification> _activeNotifications;
         private readonly FreeDesktopApplicationContext _appContext;
         private Connection? _connection;
@@ -34,7 +46,11 @@ namespace DesktopNotifications.FreeDesktop
             _notificationCloseSubscription?.Dispose();
         }
 
+        public NotificationManagerCapabilities Capabilities { get; private set; } =
+            NotificationManagerCapabilities.None;
+
         public event EventHandler<NotificationActivatedEventArgs>? NotificationActivated;
+
         public event EventHandler<NotificationDismissedEventArgs>? NotificationDismissed;
 
         public string? LaunchActionId { get; }
@@ -54,10 +70,19 @@ namespace DesktopNotifications.FreeDesktop
                 OnNotificationActionInvoked,
                 OnNotificationActionInvokedError
             );
+
             _notificationCloseSubscription = await _proxy.WatchNotificationClosedAsync(
                 OnNotificationClosed,
                 OnNotificationClosedError
             );
+
+            foreach (var cap in await _proxy.GetCapabilitiesAsync())
+            {
+                if (CapabilitiesMapping.TryGetValue(cap, out var capE))
+                {
+                    Capabilities |= capE;
+                }
+            }
         }
 
         public async Task ShowNotification(Notification notification, DateTimeOffset? expirationTime = null)
@@ -77,7 +102,7 @@ namespace DesktopNotifications.FreeDesktop
                 0,
                 _appContext.AppIcon ?? string.Empty,
                 notification.Title ?? throw new ArgumentException(),
-                notification.Body ?? throw new ArgumentException(),
+                GenerateNotificationBody(notification),
                 actions.ToArray(),
                 new Dictionary<string, object> { { "urgency", 1 } },
                 duration?.Milliseconds ?? 0
@@ -115,6 +140,26 @@ namespace DesktopNotifications.FreeDesktop
             await ShowNotification(notification, expirationTime);
         }
 
+        private string GenerateNotificationBody(Notification notification)
+        {
+            if (notification.Body == null)
+            {
+                throw new ArgumentException();
+            }
+
+            var sb = new StringBuilder();
+
+            sb.AppendLine(notification.Body);
+
+            if (Capabilities.HasFlag(NotificationManagerCapabilities.BodyImages) &&
+                notification.BodyImagePath is { } img)
+            {
+                sb.AppendLine($@"<img src=""{img}"" alt=""{notification.BodyImageAltText}""/>");
+            }
+
+            return sb.ToString();
+        }
+
         private void CheckConnection()
         {
             if (_connection == null || _proxy == null)
@@ -132,7 +177,7 @@ namespace DesktopNotifications.FreeDesktop
             }
         }
 
-        private void OnNotificationClosedError(Exception obj)
+        private static void OnNotificationClosedError(Exception obj)
         {
             throw obj;
         }
@@ -144,7 +189,7 @@ namespace DesktopNotifications.FreeDesktop
                 1 => NotificationDismissReason.Expired,
                 2 => NotificationDismissReason.User,
                 3 => NotificationDismissReason.Application,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => NotificationDismissReason.Unknown
             };
         }
 
@@ -167,7 +212,7 @@ namespace DesktopNotifications.FreeDesktop
                 new NotificationDismissedEventArgs(notification, dismissReason));
         }
 
-        private void OnNotificationActionInvokedError(Exception obj)
+        private static void OnNotificationActionInvokedError(Exception obj)
         {
             throw obj;
         }
