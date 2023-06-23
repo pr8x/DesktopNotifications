@@ -18,6 +18,11 @@
         /// <summary>
         /// The notification was explicitly removed by application code.
         /// </summary>
-        Application
+        Application,
+
+        /// <summary>
+        /// 
+        /// </summary>
+        Unknown
     }
 }

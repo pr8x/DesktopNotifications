@@ -87,25 +87,6 @@ namespace DesktopNotifications.FreeDesktop
             _activeNotifications[id] = notification;
         }
 
-        private static string GenerateNotificationBody(Notification notification)
-        {
-            if (notification.Body == null)
-            {
-                throw new ArgumentException();
-            }
-
-            var sb = new StringBuilder();
-
-            sb.AppendLine(notification.Body);
-
-            if (notification.ImagePath is { } img)
-            {
-                sb.AppendLine($@"<img src=""{img}"" alt=""{notification.ImageAltText}""/>");
-            }
-
-            return sb.ToString();
-        }
-
         public async Task HideNotification(Notification notification)
         {
             CheckConnection();
@@ -135,6 +116,25 @@ namespace DesktopNotifications.FreeDesktop
             await ShowNotification(notification, expirationTime);
         }
 
+        private static string GenerateNotificationBody(Notification notification)
+        {
+            if (notification.Body == null)
+            {
+                throw new ArgumentException();
+            }
+
+            var sb = new StringBuilder();
+
+            sb.AppendLine(notification.Body);
+
+            if (notification.ImagePath is { } img)
+            {
+                sb.AppendLine($@"<img src=""{img}"" alt=""{notification.ImageAltText}""/>");
+            }
+
+            return sb.ToString();
+        }
+
         private void CheckConnection()
         {
             if (_connection == null || _proxy == null)
@@ -152,7 +152,7 @@ namespace DesktopNotifications.FreeDesktop
             }
         }
 
-        private void OnNotificationClosedError(Exception obj)
+        private static void OnNotificationClosedError(Exception obj)
         {
             throw obj;
         }
@@ -164,7 +164,7 @@ namespace DesktopNotifications.FreeDesktop
                 1 => NotificationDismissReason.Expired,
                 2 => NotificationDismissReason.User,
                 3 => NotificationDismissReason.Application,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => NotificationDismissReason.Unknown
             };
         }
 
