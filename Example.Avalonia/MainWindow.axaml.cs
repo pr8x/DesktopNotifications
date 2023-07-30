@@ -11,13 +11,9 @@ using DesktopNotifications;
 
 namespace Example.Avalonia
 {
-    public class MainWindow : Window
+    public partial class MainWindow : Window
     {
-        private readonly TextBox _bodyTextBox;
-        private readonly ListBox _logListBox;
-        private readonly TextBox _imagePathTextBox;
         private readonly INotificationManager _notificationManager;
-        private readonly TextBox _titleTextBox;
 
         private Notification? _lastNotification;
 
@@ -28,23 +24,17 @@ namespace Example.Avalonia
             this.AttachDevTools();
 #endif
 
-            _titleTextBox = this.FindControl<TextBox>("TitleTextBox");
-            _bodyTextBox = this.FindControl<TextBox>("BodyTextBox");
-            _imagePathTextBox = this.FindControl<TextBox>("ImagePathTextBox");
-            _logListBox = this.FindControl<ListBox>("LogListBox");
-            _logListBox.Items = new ObservableCollection<string>();
-
-            _notificationManager = AvaloniaLocator.Current.GetService<INotificationManager>() ??
+            _notificationManager = Program.NotificationManager ??
                                    throw new InvalidOperationException("Missing notification manager");
             _notificationManager.NotificationActivated += OnNotificationActivated;
             _notificationManager.NotificationDismissed += OnNotificationDismissed;
 
             Log($"Capabilities: {FormatFlagEnum(_notificationManager.Capabilities)}");
 
-            _bodyTextBox.IsEnabled =
+            BodyTextBox.IsEnabled =
                 _notificationManager.Capabilities.HasFlag(NotificationManagerCapabilities.BodyText);
 
-            _imagePathTextBox.IsEnabled =
+            ImagePathTextBox.IsEnabled =
                 _notificationManager.Capabilities.HasFlag(NotificationManagerCapabilities.BodyImages);
 
             if (_notificationManager.LaunchActionId != null)
@@ -65,7 +55,7 @@ namespace Example.Avalonia
 
         private void Log(string @event)
         {
-            ((IList<string>)_logListBox.Items).Add(@event);
+            LogListBox.Items.Add(@event);
         }
 
         private void OnNotificationDismissed(object? sender, NotificationDismissedEventArgs e)
@@ -78,11 +68,6 @@ namespace Example.Avalonia
             Log($"Notification activated: {e.ActionId}");
         }
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
-
         public async void Show_OnClick(object? sender, RoutedEventArgs e)
         {
             try
@@ -91,9 +76,9 @@ namespace Example.Avalonia
 
                 var nf = new Notification
                 {
-                    Title = _titleTextBox.Text ?? _titleTextBox.Watermark,
-                    Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark,
-                    BodyImagePath = _imagePathTextBox.Text,
+                    Title = TitleTextBox.Text ?? TitleTextBox.Watermark,
+                    Body = BodyTextBox.Text ?? BodyTextBox.Watermark,
+                    BodyImagePath = ImagePathTextBox.Text,
                     Buttons =
                     {
                         ("This is awesome!", "awesome")
@@ -116,8 +101,8 @@ namespace Example.Avalonia
             {
                 var nf = new Notification
                 {
-                    Title = _titleTextBox.Text ?? _titleTextBox.Watermark,
-                    Body = _bodyTextBox.Text ?? _bodyTextBox.Watermark
+                    Title = TitleTextBox.Text ?? TitleTextBox.Watermark,
+                    Body = BodyTextBox.Text ?? BodyTextBox.Watermark
                 };
 
                 await _notificationManager.ScheduleNotification(
