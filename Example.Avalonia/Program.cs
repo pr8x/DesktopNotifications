@@ -1,10 +1,13 @@
 using Avalonia;
+using DesktopNotifications;
 using DesktopNotifications.Avalonia;
 
 namespace Example.Avalonia
 {
     internal class Program
     {
+        public static INotificationManager NotificationManager = null!;
+
         public static void Main(string[] args)
         {
             BuildAvaloniaApp()
@@ -15,7 +18,7 @@ namespace Example.Avalonia
         {
             return AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .SetupDesktopNotifications()
+                .SetupDesktopNotifications(out NotificationManager!)
                 .LogToTrace();
         }
     }
