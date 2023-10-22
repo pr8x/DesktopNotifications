@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Tmds.DBus;
 
@@ -196,11 +195,17 @@ namespace DesktopNotifications.FreeDesktop
 
         private void OnNotificationClosed((uint id, uint reason) @event)
         {
-            Console.WriteLine(Environment.CurrentManagedThreadId);
+            Notification? notification;
 
-            if (!_activeNotifications.TryGetValue(@event.id, out var notification)) return;
+            lock (_activeNotifications)
+            {
+                if (!_activeNotifications.TryGetValue(@event.id, out notification))
+                {
+                    return;
+                }
 
-            _activeNotifications.Remove(@event.id);
+                _activeNotifications.Remove(@event.id);
+            }
 
             var dismissReason = GetReason(@event.reason);
 
@@ -215,14 +220,18 @@ namespace DesktopNotifications.FreeDesktop
 
         private void OnNotificationActionInvoked((uint id, string actionKey) @event)
         {
-            Console.WriteLine(Environment.CurrentManagedThreadId);
+            Notification? notification;
 
-            if (!_activeNotifications.TryGetValue(@event.id, out var notification)) return;
-
-            _activeNotifications.Remove(@event.id);
+            lock (_activeNotifications)
+            {
+                if (!_activeNotifications.TryGetValue(@event.id, out notification))
+                {
+                    return;
+                }
+            }
 
             NotificationActivated?.Invoke(this,
-                new NotificationActivatedEventArgs(notification, @event.actionKey));
+                  new NotificationActivatedEventArgs(notification, @event.actionKey));
         }
     }
 }
