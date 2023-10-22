@@ -32,6 +32,8 @@ namespace Example
 
         private static async Task Main(string[] args)
         {
+            Console.WriteLine(Environment.CurrentManagedThreadId);
+
             using var manager = CreateManager();
             await manager.Initialize();
 

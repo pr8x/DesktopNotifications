@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Tmds.DBus;
 
@@ -195,16 +196,11 @@ namespace DesktopNotifications.FreeDesktop
 
         private void OnNotificationClosed((uint id, uint reason) @event)
         {
+            Console.WriteLine(Environment.CurrentManagedThreadId);
+
             if (!_activeNotifications.TryGetValue(@event.id, out var notification)) return;
 
             _activeNotifications.Remove(@event.id);
-
-            //TODO: Not sure why but it calls this event twice sometimes
-            //In this case the notification has already been removed from the dict.
-            if (notification == null)
-            {
-                return;
-            }
 
             var dismissReason = GetReason(@event.reason);
 
@@ -219,7 +215,11 @@ namespace DesktopNotifications.FreeDesktop
 
         private void OnNotificationActionInvoked((uint id, string actionKey) @event)
         {
+            Console.WriteLine(Environment.CurrentManagedThreadId);
+
             if (!_activeNotifications.TryGetValue(@event.id, out var notification)) return;
+
+            _activeNotifications.Remove(@event.id);
 
             NotificationActivated?.Invoke(this,
                 new NotificationActivatedEventArgs(notification, @event.actionKey));
