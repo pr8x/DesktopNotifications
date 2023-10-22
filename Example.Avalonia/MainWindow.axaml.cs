@@ -7,6 +7,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using DesktopNotifications;
 
 namespace Example.Avalonia
@@ -60,11 +61,15 @@ namespace Example.Avalonia
 
         private void OnNotificationDismissed(object? sender, NotificationDismissedEventArgs e)
         {
+            Dispatcher.UIThread.CheckAccess();
+
             Log($"Notification dismissed: {e.Reason}");
         }
 
         private void OnNotificationActivated(object? sender, NotificationActivatedEventArgs e)
         {
+            Dispatcher.UIThread.CheckAccess();
+
             Log($"Notification activated: {e.ActionId}");
         }
 
