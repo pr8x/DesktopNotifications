@@ -105,7 +105,7 @@ namespace DesktopNotifications.FreeDesktop
                 GenerateNotificationBody(notification),
                 actions.ToArray(),
                 new Dictionary<string, object> { { "urgency", 1 } },
-                duration?.Milliseconds ?? 0
+                (int?) duration?.TotalMilliseconds ?? 0
             ).ConfigureAwait(false);
 
             _activeNotifications[id] = notification;
@@ -149,12 +149,12 @@ namespace DesktopNotifications.FreeDesktop
 
             var sb = new StringBuilder();
 
-            sb.AppendLine(notification.Body);
+            sb.Append(notification.Body);
 
             if (Capabilities.HasFlag(NotificationManagerCapabilities.BodyImages) &&
                 notification.BodyImagePath is { } img)
             {
-                sb.AppendLine($@"<img src=""{img}"" alt=""{notification.BodyImageAltText}""/>");
+                sb.Append($@"\n<img src=""{img}"" alt=""{notification.BodyImageAltText}""/>");
             }
 
             return sb.ToString();
