@@ -219,10 +219,11 @@ namespace DesktopNotifications.FreeDesktop
 
         private void OnNotificationActionInvoked((uint id, string actionKey) @event)
         {
-            if (!_activeNotifications.TryGetValue(@event.id, out var notification)) return;
+            if (!_activeNotifications.TryGetValue(@event.id, out var notification) || notification is null) return;
 
             NotificationActivated?.Invoke(this,
                 new NotificationActivatedEventArgs(notification, @event.actionKey));
+            _activeNotifications.Remove(@event.id);
         }
     }
 }
