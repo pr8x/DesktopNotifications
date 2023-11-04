@@ -2,7 +2,7 @@
 
 A cross-platform C# library for native desktop "toast" notifications.
 
-[![Build](https://github.com/pr8x/DesktopNotifications/workflows/Build/badge.svg)](https://github.com/pr8x/DesktopNotifications/actions)
+[![Build](https://github.com/pr8x/DesktopNotifications/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/pr8x/DesktopNotifications/actions/workflows/build.yml)
 [![Nuget](https://img.shields.io/nuget/v/DesktopNotifications)](https://www.nuget.org/packages/DesktopNotifications/)
 [![Nuget](https://img.shields.io/nuget/dt/DesktopNotifications)](https://www.nuget.org/packages/DesktopNotifications/)
 
